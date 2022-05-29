@@ -11,7 +11,13 @@ import cecs429.text.BasicTokenProcessor;
 import cecs429.text.EnglishTokenStream;
 
 import java.util.Scanner;
+
+import javax.swing.JFileChooser;
+
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.io.Reader;
@@ -19,17 +25,32 @@ import java.io.Reader;
 public class InvertedIndexRunner {
 	public static void main(String[] args) {
 		// Create a DocumentCorpus to load .txt documents from the project directory.
-		DocumentCorpus corpus = DirectoryCorpus.loadJSONDirectory(Paths.get("NPScorpus").toAbsolutePath(), ".json");
-		// Index the documents of the corpus.
-		Index index = indexCorpus(corpus);
+		try 
+		{
+			Path directory = getPathFromUser();
+					
+			DocumentCorpus corpus = DirectoryCorpus.loadJSONDirectory(directory, ".json");
+			// Index the documents of the corpus.
+			System.out.println("Indexing corpus, please wait.  This may take a few moments!");
+			Index index = indexCorpus(corpus);
 
-		// We aren't ready to use a full query parser; for now, we'll only support single-term queries.
-		
-		String query = getUserInput();
-		for (Posting p : index.getPostings(query)) {
-			System.out.println("Document " + corpus.getDocument(p.getDocumentId()).getTitle());
-		}
+			// We aren't ready to use a full query parser; for now, we'll only support single-term queries.
+			
+			String query = getUserInput();
+			for (Posting p : index.getPostings(query)) {
+				System.out.println("Document " + corpus.getDocument(p.getDocumentId()).getTitle());
+			}
 		// TODO: fix this application so the user is asked for a term to search.
+		} 
+		catch (FileNotFoundException e) 
+		{
+			System.out.println("File error, exiting program.");
+		}
+		catch(RuntimeException e)
+		{
+			System.out.println("File selection cancelled, exiting program.");
+		}
+
 	}
 	
 	private static Index indexCorpus(DocumentCorpus corpus) {
@@ -62,5 +83,24 @@ public class InvertedIndexRunner {
 		queryTerm.toLowerCase();
 		in.close();
 		return queryTerm;
+	}
+
+	private static Path getPathFromUser() throws FileNotFoundException
+	{
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		int choice = chooser.showOpenDialog(null);
+		if(choice == JFileChooser.APPROVE_OPTION)
+		{
+			File selectedFile = chooser.getSelectedFile();
+			return selectedFile.toPath();
+		}
+		else if(choice == JFileChooser.CANCEL_OPTION)
+		{
+			throw new RuntimeException();
+		}
+		else
+			throw new FileNotFoundException();
+			
 	}
 }
