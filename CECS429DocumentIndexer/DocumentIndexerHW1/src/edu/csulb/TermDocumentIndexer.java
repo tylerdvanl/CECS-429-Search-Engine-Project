@@ -5,7 +5,7 @@ import cecs429.documents.Document;
 import cecs429.documents.DocumentCorpus;
 import cecs429.indexes.Index;
 import cecs429.indexes.Posting;
-import cecs429.indexes.TermDocumentIndex;
+//import cecs429.indexes.TermDocumentIndex;
 import cecs429.text.BasicTokenProcessor;
 import cecs429.text.EnglishTokenStream;
 
@@ -14,7 +14,7 @@ import java.io.FileInputStream;
 import java.nio.file.Paths;
 import java.util.HashSet;
 import java.io.Reader;
-
+/*
 public class TermDocumentIndexer {
 	public static void main(String[] args) {
 		// Create a DocumentCorpus to load .txt documents from the project directory.
@@ -67,6 +67,7 @@ public class TermDocumentIndexer {
 		}
 		
 		return tDIndex;
+		
 	}
 
 	private static String getUserInput()
@@ -78,4 +79,4 @@ public class TermDocumentIndexer {
 		in.close();
 		return queryTerm;
 	}
-}
+}*/

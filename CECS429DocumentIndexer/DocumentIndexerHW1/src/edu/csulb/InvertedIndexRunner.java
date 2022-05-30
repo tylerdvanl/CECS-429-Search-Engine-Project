@@ -4,7 +4,7 @@ import cecs429.documents.DirectoryCorpus;
 import cecs429.documents.Document;
 import cecs429.documents.DocumentCorpus;
 import cecs429.indexes.Index;
-import cecs429.indexes.InvertedIndex;
+import cecs429.indexes.InvertedPositionalIndex;
 import cecs429.indexes.Posting;
 //import cecs429.indexes.TermDocumentIndex;
 import cecs429.text.BasicTokenProcessor;
@@ -59,16 +59,18 @@ public class InvertedIndexRunner {
 		
 		// Constuct a TermDocumentMatrix once you know the size of the vocabulary.
 		// THEN, do the loop again! But instead of inserting into the HashSet, add terms to the index with addPosting.
-		InvertedIndex tDIndex = new InvertedIndex();
+		InvertedPositionalIndex tDIndex = new InvertedPositionalIndex();
 		for(Document d : corpus.getDocuments())
 		{
 			Reader reader = d.getContent();
 			EnglishTokenStream englishTokenStream = new EnglishTokenStream(reader);
 			Iterable<String> tokens = englishTokenStream.getTokens();
+			int positionInDocument = 0;
 			for(String token : tokens)
 			{
+				positionInDocument++;
 				token = processor.processToken(token);
-				tDIndex.addTerm(token, d.getId());
+				tDIndex.addTerm(token, d.getId(), positionInDocument);
 			}
 		}
 		
