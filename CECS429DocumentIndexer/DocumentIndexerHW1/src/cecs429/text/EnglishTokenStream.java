@@ -48,4 +48,5 @@ public class EnglishTokenStream implements TokenStream {
 		if (mReader != null)
 			mReader.close();
 	}
+
 }

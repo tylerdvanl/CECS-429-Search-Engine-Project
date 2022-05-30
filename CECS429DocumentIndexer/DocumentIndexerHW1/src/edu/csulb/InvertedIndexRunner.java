@@ -50,7 +50,6 @@ public class InvertedIndexRunner {
 		{
 			System.out.println("File selection cancelled, exiting program.");
 		}
-
 	}
 	
 	private static Index indexCorpus(DocumentCorpus corpus) {
@@ -73,7 +72,7 @@ public class InvertedIndexRunner {
 				tDIndex.addTerm(token, d.getId(), positionInDocument);
 			}
 		}
-		
+
 		return tDIndex;
 	}
 
@@ -102,7 +101,6 @@ public class InvertedIndexRunner {
 			throw new RuntimeException();
 		}
 		else
-			throw new FileNotFoundException();
-			
+			throw new FileNotFoundException();	
 	}
 }
