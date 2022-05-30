@@ -29,4 +29,13 @@ public class Posting {
 		if(!mPositions.contains(position))
 			mPositions.add(position);
 	}
+
+	/**
+	 * Retrieves all the positions stored within this posting.
+	 * @return The positions stored within this posting.
+	 */
+	public ArrayList<Integer> getPositions()
+	{
+		return mPositions;
+	}
 }

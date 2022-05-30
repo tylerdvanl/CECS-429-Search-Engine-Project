@@ -38,7 +38,7 @@ public class InvertedIndexRunner {
 			
 			String query = getUserInput();
 			for (Posting p : index.getPostings(query)) {
-				System.out.println("Document " + corpus.getDocument(p.getDocumentId()).getTitle());
+				System.out.println("Document " + corpus.getDocument(p.getDocumentId()).getTitle() + " at positions: " + p.getPositions());
 			}
 		// TODO: fix this application so the user is asked for a term to search.
 		} 
