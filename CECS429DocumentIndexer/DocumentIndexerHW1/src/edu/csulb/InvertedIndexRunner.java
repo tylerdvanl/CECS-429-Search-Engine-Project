@@ -8,6 +8,7 @@ import cecs429.indexes.InvertedPositionalIndex;
 import cecs429.indexes.Posting;
 //import cecs429.indexes.TermDocumentIndex;
 import cecs429.text.BasicTokenProcessor;
+import cecs429.text.EnglishTokenProcessor;
 import cecs429.text.EnglishTokenStream;
 
 import java.util.Scanner;
@@ -19,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.io.Reader;
 
@@ -53,12 +55,12 @@ public class InvertedIndexRunner {
 	}
 	
 	private static Index indexCorpus(DocumentCorpus corpus) {
-		BasicTokenProcessor processor = new BasicTokenProcessor();
+		EnglishTokenProcessor processor = new EnglishTokenProcessor();
 		
 		
 		// Constuct a TermDocumentMatrix once you know the size of the vocabulary.
 		// THEN, do the loop again! But instead of inserting into the HashSet, add terms to the index with addPosting.
-		InvertedPositionalIndex tDIndex = new InvertedPositionalIndex();
+		InvertedPositionalIndex positionalIndex = new InvertedPositionalIndex();
 		for(Document d : corpus.getDocuments())
 		{
 			Reader reader = d.getContent();
@@ -68,12 +70,13 @@ public class InvertedIndexRunner {
 			for(String token : tokens)
 			{
 				positionInDocument++;
-				token = processor.processToken(token);
-				tDIndex.addTerm(token, d.getId(), positionInDocument);
+				ArrayList<String> processingTokens = processor.processToken(token);
+				for(String processed : processingTokens)
+					positionalIndex.addTerm(processed, d.getId(), positionInDocument);
 			}
 		}
 
-		return tDIndex;
+		return positionalIndex;
 	}
 
 	private static String getUserInput()
