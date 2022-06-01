@@ -148,8 +148,22 @@ public class BooleanQueryParser {
 			++startIndex;
 		}
 		
+		int nextSpace = 0;
+		//If the subquery is a quotation mark, the literal will end at the next quotation mark.
+		if(subquery.startsWith("\""))
+		{
+			nextSpace = subquery.indexOf("\"", startIndex + 1);
+			//If there is no closing quotation, throw an exception to yell at the user.
+			if(nextSpace < 0)
+				throw new IllegalArgumentException();
+
+		}
+
 		// Locate the next space to find the end of this literal.
-		int nextSpace = subquery.indexOf(' ', startIndex);
+		else
+			nextSpace = subquery.indexOf(' ', startIndex);
+			
+
 		if (nextSpace < 0) {
 			// No more literals in this subquery.
 			lengthOut = subLength - startIndex;
@@ -158,16 +172,32 @@ public class BooleanQueryParser {
 			lengthOut = nextSpace - startIndex;
 		}
 		
-		// This is a term literal containing a single term.
-		return new Literal(
-		 new StringBounds(startIndex, lengthOut),
-		 new TermLiteral(subquery.substring(startIndex, startIndex + lengthOut)));
-		
+		//If the character in nextSpace is a space OR nextSpace < 0, create a Literal.  Else, if the character is a quotation mark, create a PhraseLiteral.
+		if(nextSpace < 0 || subquery.charAt(nextSpace) == ' ')
+		{
+			// This is a term literal containing a single term.
+			return new Literal(
+				new StringBounds(startIndex, lengthOut),
+				new TermLiteral(subquery.substring(startIndex, startIndex + lengthOut)));
+		}
+		else if(subquery.charAt(nextSpace) == '\"')
+		{
+			return new Literal(
+				new StringBounds(startIndex, lengthOut), 
+				new PhraseLiteral(subquery.substring(startIndex, startIndex + lengthOut)));
+		}
+		//If neither of those things are true, we should throw an exception
+		else
+			throw new IllegalArgumentException();
+
 		/*
 		TODO:
 		Instead of assuming that we only have single-term literals, modify this method so it will create a PhraseLiteral
 		object if the first non-space character you find is a double-quote ("). In this case, the literal is not ended
 		by the next space character, but by the next double-quote character.
+		MAYBE DONE?
 		 */
 	}
 }
+
+
