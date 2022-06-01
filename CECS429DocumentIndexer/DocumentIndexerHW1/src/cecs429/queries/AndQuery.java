@@ -1,5 +1,6 @@
 package cecs429.queries;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,10 +19,19 @@ public class AndQuery implements QueryComponent {
 	
 	@Override
 	public List<Posting> getPostings(Index index) {
-		List<Posting> result = null;
+		List<Posting> result = new ArrayList<>();
+		ArrayList<List<Posting>> potentialMatches = new ArrayList<>();
 		
 		// TODO: program the merge for an AndQuery, by gathering the postings of the composed QueryComponents and
 		// intersecting the resulting postings.
+
+		//Grab postings from all query components.
+		for(QueryComponent literal : mComponents)
+		{
+			potentialMatches.add(literal.getPostings(index));
+		}
+
+		//Merge the lists of postings. TODO: helper function?
 		
 		return result;
 	}
@@ -30,5 +40,45 @@ public class AndQuery implements QueryComponent {
 	public String toString() {
 		return
 		 String.join(" ", mComponents.stream().map(c -> c.toString()).collect(Collectors.toList()));
+	}
+
+	/**
+     * Merges two lists of postings together, with implementation left up to the object implementing this interface.
+     * @param postings1 First list of postings.
+     * @param postings2 Second list of postings.
+     * @return The list of postings as a result of the merge.
+     */
+    List<Posting> mergePostingsAnd(List<Posting> postings1, List<Posting> postings2)
+	{
+		List<Posting> merged = new ArrayList<>();
+		
+		int i = 0;
+		int j = 0;
+
+		while(i < postings1.size() && j < postings2.size())
+		{
+			//Check the two list indicies for matching document IDs, assuming a sorted list.
+			//If they both match, increment both i and j and add the postings to the merged list.
+			if((postings1.get(i)).getDocumentId() == (postings2.get(j).getDocumentId()))
+			{
+				merged.add(postings1.get(i));
+				merged.add(postings2.get(j));
+
+				i++;
+				j++;
+			}
+			//If they dont match, we need to check which Document ID is smaller, and increment the iterator for THAT list.
+			else if((postings1.get(i)).getDocumentId() < (postings2.get(j).getDocumentId()))
+			{
+				i++;
+			}
+			else if((postings1.get(i)).getDocumentId() > (postings2.get(j).getDocumentId()))
+			{
+				j++;
+			}
+		}
+		//If we've fallen off the edge of one of the lists, we can be certain that we will never find another match, and so can return the merged list now.
+		//This is possible because this is an AND merge.
+		return merged;
 	}
 }

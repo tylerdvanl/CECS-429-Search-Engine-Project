@@ -10,6 +10,7 @@ import cecs429.indexes.Posting;
 import cecs429.text.BasicTokenProcessor;
 import cecs429.text.EnglishTokenProcessor;
 import cecs429.text.EnglishTokenStream;
+import cecs429.queries.*;
 
 import java.util.Scanner;
 
@@ -38,9 +39,14 @@ public class InvertedIndexRunner {
 
 			// We aren't ready to use a full query parser; for now, we'll only support single-term queries.
 			
-			String query = getUserInput();
-			for (Posting p : index.getPostings(query)) {
+			QueryComponent query = getUserInput();
+			/*for (Posting p : index.getPostings(query)) {
 				System.out.println("Document " + corpus.getDocument(p.getDocumentId()).getTitle() + " at positions: " + p.getPositions());
+			}*/
+
+			for(Posting p : query.getPostings(index))
+			{
+				System.out.println("Document " + corpus.getDocument(p.getDocumentId()).getTitle());
 			}
 		// TODO: fix this application so the user is asked for a term to search.
 		} 
@@ -79,14 +85,15 @@ public class InvertedIndexRunner {
 		return positionalIndex;
 	}
 
-	private static String getUserInput()
+	private static QueryComponent getUserInput()
 	{
 		Scanner in = new Scanner(System.in);
 		System.out.println("Enter a single search term: ");
-		String queryTerm = in.nextLine();
-		queryTerm.toLowerCase();
+		String queryString = in.nextLine();
+		BooleanQueryParser queryParser = new BooleanQueryParser();
+		QueryComponent query = queryParser.parseQuery(queryString);
 		in.close();
-		return queryTerm;
+		return query;
 	}
 
 	private static Path getPathFromUser() throws FileNotFoundException

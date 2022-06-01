@@ -158,11 +158,9 @@ public class BooleanQueryParser {
 				throw new IllegalArgumentException();
 
 		}
-
 		// Locate the next space to find the end of this literal.
 		else
 			nextSpace = subquery.indexOf(' ', startIndex);
-			
 
 		if (nextSpace < 0) {
 			// No more literals in this subquery.
