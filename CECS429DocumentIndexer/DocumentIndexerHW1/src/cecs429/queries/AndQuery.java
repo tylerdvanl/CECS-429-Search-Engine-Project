@@ -32,6 +32,7 @@ public class AndQuery implements QueryComponent {
 		}
 
 		//Merge the lists of postings. TODO: helper function?
+		result = this.mergePostingsAnd(potentialMatches.get(0), potentialMatches.get(1));
 		
 		return result;
 	}

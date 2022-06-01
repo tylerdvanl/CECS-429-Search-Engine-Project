@@ -62,7 +62,6 @@ public class EnglishTokenProcessor implements TokenProcessor
             stemmer.setCurrent(word);
             stemmer.stem();
             String newWord = stemmer.getCurrent();
-            System.out.println("stemmed: " + newWord);
             processed.set(processed.indexOf(word), newWord);
         }
         //System.out.println("Tokens: " + processed);
