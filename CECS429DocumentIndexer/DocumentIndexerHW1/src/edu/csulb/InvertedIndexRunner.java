@@ -31,6 +31,7 @@ public class InvertedIndexRunner {
 		try 
 		{
 			Path directory = getPathFromUser();
+			EnglishTokenProcessor processor = new EnglishTokenProcessor();
 					
 			DocumentCorpus corpus = DirectoryCorpus.loadJSONDirectory(directory, ".json");
 			// Index the documents of the corpus.
@@ -44,7 +45,7 @@ public class InvertedIndexRunner {
 				System.out.println("Document " + corpus.getDocument(p.getDocumentId()).getTitle() + " at positions: " + p.getPositions());
 			}*/
 
-			for(Posting p : query.getPostings(index))
+			for(Posting p : query.getPostings(index, processor))
 			{
 				System.out.println("Document " + corpus.getDocument(p.getDocumentId()).getTitle());
 			}

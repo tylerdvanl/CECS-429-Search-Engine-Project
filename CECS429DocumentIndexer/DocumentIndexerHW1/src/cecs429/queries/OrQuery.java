@@ -27,7 +27,7 @@ public class OrQuery implements QueryComponent {
 		//Grab postings from all query components.
 		for(QueryComponent literal : mComponents)
 		{
-			//potentialMatches.add(literal.getPostings(index));
+			potentialMatches.add(literal.getPostings(index, processor));
 		}
 
 		//Merge the lists of postings.
