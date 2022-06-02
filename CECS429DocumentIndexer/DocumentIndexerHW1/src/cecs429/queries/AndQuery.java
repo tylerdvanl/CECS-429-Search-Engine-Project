@@ -23,7 +23,7 @@ public class AndQuery implements QueryComponent {
 		ArrayList<List<Posting>> potentialMatches = new ArrayList<>();
 		
 		// TODO: program the merge for an AndQuery, by gathering the postings of the composed QueryComponents and
-		// intersecting the resulting postings.
+		// intersecting the resulting postings. TODO DOne????
 
 		//Grab postings from all query components.
 		for(QueryComponent literal : mComponents)
@@ -49,7 +49,7 @@ public class AndQuery implements QueryComponent {
 	}
 
 	/**
-     * Merges two lists of postings together, with implementation left up to the object implementing this interface.
+     * Merges two lists of postings together, using intersection
      * @param postings1 First list of postings.
      * @param postings2 Second list of postings.
      * @return The list of postings as a result of the merge.
