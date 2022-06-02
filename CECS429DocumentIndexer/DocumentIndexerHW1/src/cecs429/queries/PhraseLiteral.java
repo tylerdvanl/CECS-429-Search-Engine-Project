@@ -7,6 +7,7 @@ import java.util.List;
 import cecs429.indexes.Index;
 import cecs429.indexes.Posting;
 import cecs429.text.EnglishTokenProcessor;
+import cecs429.text.TokenProcessor;
 
 /**
  * Represents a phrase literal consisting of one or more terms that must occur in sequence.
@@ -30,7 +31,7 @@ public class PhraseLiteral implements QueryComponent {
 	}
 	
 	@Override
-	public List<Posting> getPostings(Index index) {
+	public List<Posting> getPostings(Index index, TokenProcessor processor) {
 		return null;
 		// TODO: program this method. Retrieve the postings for the individual terms in the phrase,
 		// and positional merge them together.

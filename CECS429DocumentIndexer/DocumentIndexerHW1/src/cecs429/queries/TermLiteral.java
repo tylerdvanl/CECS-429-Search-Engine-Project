@@ -6,6 +6,7 @@ import java.util.List;
 import cecs429.indexes.Index;
 import cecs429.indexes.Posting;
 import cecs429.text.EnglishTokenProcessor;
+import cecs429.text.TokenProcessor;
 
 
 /**
@@ -23,12 +24,10 @@ public class TermLiteral implements QueryComponent {
 	}
 	
 	@Override
-	public List<Posting> getPostings(Index index) {
-		EnglishTokenProcessor processor = new EnglishTokenProcessor();
-		String processedTerm = (processor.processToken(mTerm)).get(0);
-		
-
-		return index.getPostings(mTerm);
+	public List<Posting> getPostings(Index index, TokenProcessor processor) {
+		//Grab the first string that results from processing the term.
+		String literal = (processor.processToken(mTerm)).get(0);
+		return index.getPostings(literal);
 	}
 	
 	@Override
