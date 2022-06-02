@@ -62,9 +62,8 @@ public class AndQuery implements QueryComponent {
 			//If they both match, increment both i and j and add the postings to the merged list.
 			if((postings1.get(i)).getDocumentId() == (postings2.get(j).getDocumentId()))
 			{
-				merged.add(postings1.get(i));
-				merged.add(postings2.get(j));
-
+				//Add a new posting for this document with no positions 
+				merged.add(new Posting(postings1.get(i).getDocumentId()));
 				i++;
 				j++;
 			}

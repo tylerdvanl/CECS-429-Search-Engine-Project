@@ -88,7 +88,7 @@ public class InvertedIndexRunner {
 	private static QueryComponent getUserInput()
 	{
 		Scanner in = new Scanner(System.in);
-		System.out.println("Enter a single search term: ");
+		System.out.println("Enter a query: ");
 		String queryString = in.nextLine();
 		BooleanQueryParser queryParser = new BooleanQueryParser();
 		QueryComponent query = queryParser.parseQuery(queryString);
