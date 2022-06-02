@@ -62,8 +62,7 @@ public class InvertedIndexRunner {
 	
 	private static Index indexCorpus(DocumentCorpus corpus) {
 		EnglishTokenProcessor processor = new EnglishTokenProcessor();
-		
-		
+
 		// Constuct a TermDocumentMatrix once you know the size of the vocabulary.
 		// THEN, do the loop again! But instead of inserting into the HashSet, add terms to the index with addPosting.
 		InvertedPositionalIndex positionalIndex = new InvertedPositionalIndex();

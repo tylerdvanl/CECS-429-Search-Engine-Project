@@ -45,10 +45,35 @@ public class EnglishTokenProcessor implements TokenProcessor
         return processed;
     }
 
+    /**
+     * Processes a string in the same way as processToken() but skips the hyphen modification step.
+     * @param token The string to be processed.
+     * @return  A list containing the processed string.  This method is intended to only return one (or 0, possibly) string.
+     */
     public ArrayList<String> processTokenKeepHyphens(String token)
     {
-        //TODO: Process a token, but keep the hyphens.
-        return null;
+        // Remove all non-alphanumeric characters from the beginning and end of the token, but not the middle
+        token = removeNonAlphanumeric(token);
+        if(token.isEmpty())
+            return new ArrayList<String>();
+
+        //Remove all apostropes or quotation marks (single or double quotes) from anywhere in the string.
+        token = token.replaceAll("[\'\"]", "");
+        if(token.isEmpty())
+            return new ArrayList<String>();
+
+        ArrayList<String> processed = new ArrayList<>();
+        
+        //Convert the token to lowercase.
+        for(String word : processed)
+        {
+            processed.set(processed.indexOf(word), word.toLowerCase());
+        }
+        
+        //Stem the token using an implementation of the Porter2 stemmer. Please do not code this yourself; find
+        //an implementation with a permissible license and integrate it with your solution.
+        processed = stemStrings(processed);
+        return processed;
     }
 
     /**
@@ -117,5 +142,4 @@ public class EnglishTokenProcessor implements TokenProcessor
         }
         return tokens;
     }
-    
 }
