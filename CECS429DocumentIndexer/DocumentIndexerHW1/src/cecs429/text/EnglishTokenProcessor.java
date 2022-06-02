@@ -119,9 +119,18 @@ public class EnglishTokenProcessor implements TokenProcessor
         //      (So the token Hewlett-Packard-Computing would turn into HewlettPackardComputing, Hewlett,
         //      Packard, and Computing.)
         ArrayList<String> modified = new ArrayList<>();
-        modified.add(token.replaceAll("[-]", ""));
-        modified.addAll(Arrays.asList(token.split("[-]")));
-        return modified;
+        if(!token.contains("-"))
+        {
+            modified.add(token);
+            return modified;
+        }
+        else
+        {
+            modified.add(token.replaceAll("[-]", ""));
+            modified.addAll(Arrays.asList(token.split("[-]")));
+            return modified;
+        }
+        
     }
 
     /**
@@ -140,6 +149,7 @@ public class EnglishTokenProcessor implements TokenProcessor
             String newWord = stemmer.getCurrent();
             tokens.set(tokens.indexOf(word), newWord);
         }
+        System.out.println("Tokens: " + tokens);
         return tokens;
     }
 }

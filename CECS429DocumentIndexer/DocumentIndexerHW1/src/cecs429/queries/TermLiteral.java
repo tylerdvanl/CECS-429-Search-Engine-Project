@@ -25,23 +25,10 @@ public class TermLiteral implements QueryComponent {
 	@Override
 	public List<Posting> getPostings(Index index) {
 		EnglishTokenProcessor processor = new EnglishTokenProcessor();
-		List<String> processedTerms = processor.processToken(mTerm);
-		List<Posting> postings = new ArrayList<>();
-		List<QueryComponent> newLiterals = new ArrayList<>();
-		for(String term : processedTerms)
-		{
-			newLiterals.add(new TermLiteral(term));
-		}
-		if(processedTerms.size() == 1)
-		{
-			postings.addAll(index.getPostings(processedTerms.get(0)));
-			return postings;
-		}
-		else
-		{
-			postings = new AndQuery(newLiterals).getPostings(index);
-			return postings;
-		}			
+		String processedTerm = (processor.processToken(mTerm)).get(0);
+		
+
+		return index.getPostings(mTerm);
 	}
 	
 	@Override
