@@ -29,11 +29,7 @@ public class OrQuery implements QueryComponent {
 			potentialMatches.add(literal.getPostings(index));
 		}
 
-		// TODO: program the merge for an OrQuery, by gathering the postings of the composed QueryComponents and
-		// unioning the resulting postings.
-		
-
-		//Merge the lists of postings. TODO: helper function?
+		//Merge the lists of postings.
 		//Merge the first 2 lists immediately.  Then, continue merging any additional lists into the results list.
 		result = this.mergePostingsOr(potentialMatches.get(0), potentialMatches.get(1));
 		for(int i = 2; i < potentialMatches.size(); i++)

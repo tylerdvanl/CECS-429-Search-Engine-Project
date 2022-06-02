@@ -21,9 +21,6 @@ public class AndQuery implements QueryComponent {
 	public List<Posting> getPostings(Index index) {
 		List<Posting> result = new ArrayList<>();
 		ArrayList<List<Posting>> potentialMatches = new ArrayList<>();
-		
-		// TODO: program the merge for an AndQuery, by gathering the postings of the composed QueryComponents and
-		// intersecting the resulting postings. TODO DOne????
 
 		//Grab postings from all query components.
 		for(QueryComponent literal : mComponents)
@@ -31,7 +28,7 @@ public class AndQuery implements QueryComponent {
 			potentialMatches.add(literal.getPostings(index));
 		}
 
-		//Merge the lists of postings. TODO: helper function?
+		//Merge the lists of postings.
 		//Merge the first 2 lists immediately.  Then, continue merging any additional lists into the results list.
 		result = this.mergePostingsAnd(potentialMatches.get(0), potentialMatches.get(1));
 		for(int i = 2; i < potentialMatches.size(); i++)
