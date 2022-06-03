@@ -84,6 +84,7 @@ public class EnglishTokenProcessor implements TokenProcessor
      */
     private String removeNonAlphanumeric(String token)
     {
+        //TODO: Loop until ALL special characters are removed from the beginning and end. Shouldn't be much more work.
         // Remove all non-alphanumeric characters from the beginning and end of the token, but not the middle
         if(token.substring(0, 1).matches("\\W"))
         {

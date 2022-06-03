@@ -55,7 +55,7 @@ public class PhraseLiteral implements QueryComponent {
 		return "\"" + String.join(" ", mTerms) + "\"";
 	}
 
-	//TODO: Positional merge for phrase queries.
+	//TODO: Positional merge for phrase queries.  Duplicates are getting added for some reason, fix it.  Also, these queries seem to take a long time.
 	List<Posting> positionalMerge(List<Posting> postings1, List<Posting> postings2, int targetDistance)
 	{
 		List<Posting> merged = new ArrayList<>();
