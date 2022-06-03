@@ -30,25 +30,54 @@ public class InvertedIndexRunner {
 		// Create a DocumentCorpus to load .txt documents from the project directory.
 		try 
 		{
+			Scanner in = new Scanner(System.in);
 			Path directory = getPathFromUser();
 			EnglishTokenProcessor processor = new EnglishTokenProcessor();
 					
 			DocumentCorpus corpus = DirectoryCorpus.loadJSONDirectory(directory, ".json");
 			// Index the documents of the corpus.
-			System.out.println("Indexing corpus, please wait.  This may take a few moments!");
 			Index index = indexCorpus(corpus);
-
-			// We aren't ready to use a full query parser; for now, we'll only support single-term queries.
+			boolean exit = false;
 			
-			QueryComponent query = getUserInput();
-			/*for (Posting p : index.getPostings(query)) {
-				System.out.println("Document " + corpus.getDocument(p.getDocumentId()).getTitle() + " at positions: " + p.getPositions());
-			}*/
-
-			for(Posting p : query.getPostings(index, processor))
+			while(!exit)
 			{
-				System.out.println("Document " + corpus.getDocument(p.getDocumentId()).getTitle());
+				String input = getUserInput(in);
+				//Special user inputs:
+				// :q quits the program.
+				if(input.matches(":q"))
+				{
+					exit = true;
+				}
+				else if(input.startsWith(":stem"))
+				{
+					System.out.println("Placeholder special stem function");
+				}
+				else if(input.startsWith(":index"))
+				{
+					System.out.println("Placeholder new index directory funtion.");
+				}
+				else if(input.matches(":vocab"))
+				{
+					printFirstThousandVocabAndTotal(index);
+				}
+				else
+				{
+					QueryComponent query = createQuery(input);
+					/*for (Posting p : index.getPostings(query)) {
+						System.out.println("Document " + corpus.getDocument(p.getDocumentId()).getTitle() + " at positions: " + p.getPositions());
+					}*/
+					int returnedPostings = 0;
+					for(Posting p : query.getPostings(index, processor))
+					{
+						returnedPostings++;
+						System.out.println("Document " + corpus.getDocument(p.getDocumentId()).getTitle());
+					}
+					System.out.println("Number of documents found: " + returnedPostings);
+				}
 			}
+			in.close();
+			System.out.println("Exiting, good bye!");
+			
 		// TODO: fix this application so the user is asked for a term to search.
 		} 
 		catch (FileNotFoundException e) 
@@ -57,7 +86,7 @@ public class InvertedIndexRunner {
 		}
 		catch(RuntimeException e)
 		{
-			System.out.println("File selection cancelled, exiting program.");
+			System.out.println("Error detected, exiting program.");
 		}
 	}
 	
@@ -67,6 +96,7 @@ public class InvertedIndexRunner {
 		// Constuct a TermDocumentMatrix once you know the size of the vocabulary.
 		// THEN, do the loop again! But instead of inserting into the HashSet, add terms to the index with addPosting.
 		InvertedPositionalIndex positionalIndex = new InvertedPositionalIndex();
+		System.out.println("Indexing corpus, please wait.  This may take a few moments!");
 		for(Document d : corpus.getDocuments())
 		{
 			Reader reader = d.getContent();
@@ -81,18 +111,24 @@ public class InvertedIndexRunner {
 					positionalIndex.addTerm(processed, d.getId(), positionInDocument);
 			}
 		}
-
 		return positionalIndex;
 	}
 
-	private static QueryComponent getUserInput()
+	private static String getUserInput(Scanner inputScanner)
 	{
-		Scanner in = new Scanner(System.in);
+		
 		System.out.println("Enter a query: ");
-		String queryString = in.nextLine();
+		System.out.print("> ");
+		String userInput = inputScanner.nextLine();
+		//Consume left over newline
+		//in.nextLine();
+		return userInput;
+	}
+
+	private static QueryComponent createQuery(String queryString)
+	{
 		BooleanQueryParser queryParser = new BooleanQueryParser();
 		QueryComponent query = queryParser.parseQuery(queryString);
-		in.close();
 		return query;
 	}
 
@@ -112,5 +148,17 @@ public class InvertedIndexRunner {
 		}
 		else
 			throw new FileNotFoundException();	
+	}
+
+	//Stem special query
+	//Index special query
+	private static void printFirstThousandVocabAndTotal(Index index)
+	{
+		ArrayList<String> vocab = new ArrayList<String>(index.getVocabulary());
+		for(int count = 0; count < 1000 && count < vocab.size(); count++)
+		{
+			System.out.println(vocab.get(count));
+		}
+		System.out.println("Total vocabulary size: " + vocab.size());
 	}
 }

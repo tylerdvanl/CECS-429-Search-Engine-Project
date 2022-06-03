@@ -149,7 +149,7 @@ public class EnglishTokenProcessor implements TokenProcessor
             String newWord = stemmer.getCurrent();
             tokens.set(tokens.indexOf(word), newWord);
         }
-        System.out.println("Tokens: " + tokens);
+        //System.out.println("Tokens: " + tokens);
         return tokens;
     }
 }
