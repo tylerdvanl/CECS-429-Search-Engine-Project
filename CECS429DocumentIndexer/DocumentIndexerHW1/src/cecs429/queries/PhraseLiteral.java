@@ -45,7 +45,7 @@ public class PhraseLiteral implements QueryComponent {
 		for(int i = 2; i < potentialMatches.size(); i++)
 		{
 			targetDistance++;
-			result.addAll(this.positionalMerge(result, potentialMatches.get(i), targetDistance));
+			result = this.positionalMerge(result, potentialMatches.get(i), targetDistance);
 		}
 		return result;
 	}
