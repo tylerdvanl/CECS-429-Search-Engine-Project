@@ -152,7 +152,7 @@ public class BooleanQueryParser {
 		//If the subquery is a quotation mark, the literal will end at the next quotation mark.
 		if(subquery.startsWith("\""))
 		{
-			nextSpace = subquery.indexOf("\"", startIndex + 1);
+			nextSpace = subquery.indexOf('\"', startIndex + 1);
 			//If there is no closing quotation, throw an exception to yell at the user.
 			if(nextSpace < 0)
 				throw new IllegalArgumentException();
@@ -181,8 +181,8 @@ public class BooleanQueryParser {
 		else if(subquery.charAt(nextSpace) == '\"')
 		{
 			return new Literal(
-				new StringBounds(startIndex, lengthOut), 
-				new PhraseLiteral(subquery.substring(startIndex, startIndex + lengthOut)));
+				new StringBounds(startIndex, lengthOut + 1), 
+				new PhraseLiteral(subquery.substring(startIndex, startIndex + lengthOut + 1)));
 		}
 		//If neither of those things are true, we should throw an exception
 		else
