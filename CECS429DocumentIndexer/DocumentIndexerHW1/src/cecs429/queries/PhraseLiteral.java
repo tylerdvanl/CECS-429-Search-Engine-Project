@@ -31,10 +31,23 @@ public class PhraseLiteral implements QueryComponent {
 	}
 	
 	@Override
-	public List<Posting> getPostings(Index index, TokenProcessor processor) {
-		return null;
-		// TODO: program this method. Retrieve the postings for the individual terms in the phrase,
-		// and positional merge them together.
+	public List<Posting> getPostings(Index index, TokenProcessor processor) 
+	{
+		List<Posting> result = new ArrayList<>();
+		ArrayList<List<Posting>> potentialMatches = new ArrayList<>();
+		for(String term : mTerms)
+		{
+			potentialMatches.add(index.getPostings(processor.processToken(term).get(0)));
+		}
+		
+		int targetDistance = 1;
+		result = this.positionalMerge(potentialMatches.get(0), potentialMatches.get(1), targetDistance);
+		for(int i = 2; i < potentialMatches.size(); i++)
+		{
+			targetDistance++;
+			result.addAll(this.positionalMerge(result, potentialMatches.get(i), targetDistance));
+		}
+		return result;
 	}
 	
 	@Override
@@ -43,4 +56,56 @@ public class PhraseLiteral implements QueryComponent {
 	}
 
 	//TODO: Positional merge for phrase queries.
+	List<Posting> positionalMerge(List<Posting> postings1, List<Posting> postings2, int targetDistance)
+	{
+		List<Posting> merged = new ArrayList<>();
+		
+		int i = 0;
+		int j = 0;
+
+		while(i < postings1.size() && j < postings2.size())
+		{
+			//Check the two list indicies for matching document IDs, assuming a sorted list.
+			//If they both match, increment both i and j and add the postings to the merged list.
+			if((postings1.get(i)).getDocumentId() == (postings2.get(j).getDocumentId()))
+			{
+				//Check to see if any positions in the postings are offset by targetDistance 
+				int a = 0;
+				int b = 0;
+
+				ArrayList<Integer> positions1 = postings1.get(i).getPositions();
+				ArrayList<Integer> positions2 = postings2.get(j).getPositions();
+
+				while(a < positions1.size() && b < positions2.size())
+				{
+					if(positions2.get(b) - positions1.get(a) == targetDistance)
+					{
+						merged.add(postings1.get(i));
+						a++;
+						b++;
+					}
+					else if(positions1.get(a) < positions2.get(b))
+						a++;
+					else if(positions1.get(a) > positions2.get(b))
+						b++;
+				}
+				
+				i++;
+				j++;
+			}
+			//If they dont match, we need to check which Document ID is smaller, and increment the iterator for THAT list.
+			else if((postings1.get(i)).getDocumentId() < (postings2.get(j).getDocumentId()))
+			{
+				i++;
+			}
+			else if((postings1.get(i)).getDocumentId() > (postings2.get(j).getDocumentId()))
+			{
+				j++;
+			}
+		}
+
+		//If we've fallen off the edge of one of the lists, we can be certain that we will never find another match, and so can return the merged list now.
+		//This is possible because this is an AND merge.
+		return merged;
+	}
 }
