@@ -83,11 +83,17 @@ public class PhraseLiteral implements QueryComponent {
 						merged.add(postings1.get(i));
 						a++;
 						b++;
+						break;
 					}
 					else if(positions1.get(a) < positions2.get(b))
 						a++;
 					else if(positions1.get(a) > positions2.get(b))
 						b++;
+					else if(positions1.get(a).equals(positions2.get(b)))
+					{
+						a++;
+						b++;
+					}
 				}
 				
 				i++;
@@ -108,4 +114,6 @@ public class PhraseLiteral implements QueryComponent {
 		//This is possible because this is an AND merge.
 		return merged;
 	}
+
+
 }
