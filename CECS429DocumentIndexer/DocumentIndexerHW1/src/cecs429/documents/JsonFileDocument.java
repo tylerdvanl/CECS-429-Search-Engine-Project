@@ -80,4 +80,10 @@ public class JsonFileDocument implements FileDocument
    {
        return new JsonFileDocument(docId, absolutePath);
    }
+
+    @Override
+    public Path getPath() 
+    {
+        return mFilePath;
+    }
 }

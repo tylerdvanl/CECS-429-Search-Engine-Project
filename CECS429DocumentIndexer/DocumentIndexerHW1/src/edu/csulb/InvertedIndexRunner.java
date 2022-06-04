@@ -38,7 +38,7 @@ public class InvertedIndexRunner {
 			Scanner in = new Scanner(System.in);
 			Path directory = getPathFromUser();
 			EnglishTokenProcessor processor = new EnglishTokenProcessor();
-					
+
 			DocumentCorpus corpus = DirectoryCorpus.loadJSONDirectory(directory, ".json");
 			// Index the documents of the corpus.
 			Index index = indexCorpus(corpus);
