@@ -37,7 +37,7 @@ public class PhraseLiteral implements QueryComponent {
 		ArrayList<List<Posting>> potentialMatches = new ArrayList<>();
 		for(String term : mTerms)
 		{
-			potentialMatches.add(index.getPostings(processor.processToken(term).get(0)));
+			potentialMatches.add(index.getPostings(processor.processTokenKeepHyphens(term).get(0)));
 		}
 		
 		int targetDistance = 1;

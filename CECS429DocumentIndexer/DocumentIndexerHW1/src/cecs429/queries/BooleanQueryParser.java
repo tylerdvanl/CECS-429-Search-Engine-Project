@@ -187,14 +187,6 @@ public class BooleanQueryParser {
 		//If neither of those things are true, we should throw an exception
 		else
 			throw new IllegalArgumentException();
-
-		/*
-		TODO:
-		Instead of assuming that we only have single-term literals, modify this method so it will create a PhraseLiteral
-		object if the first non-space character you find is a double-quote ("). In this case, the literal is not ended
-		by the next space character, but by the next double-quote character.
-		MAYBE DONE?
-		 */
 	}
 }
 

@@ -11,4 +11,6 @@ public interface TokenProcessor {
 	 */
 	ArrayList<String> processToken(String token);
 
+	ArrayList<String> processTokenKeepHyphens(String token);
+
 }

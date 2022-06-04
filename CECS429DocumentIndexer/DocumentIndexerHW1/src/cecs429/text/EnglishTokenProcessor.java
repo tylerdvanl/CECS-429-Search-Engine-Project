@@ -63,6 +63,7 @@ public class EnglishTokenProcessor implements TokenProcessor
             return new ArrayList<String>();
 
         ArrayList<String> processed = new ArrayList<>();
+        processed.add(token);
         
         //Convert the token to lowercase.
         for(String word : processed)
@@ -86,7 +87,25 @@ public class EnglishTokenProcessor implements TokenProcessor
     {
         //TODO: Loop until ALL special characters are removed from the beginning and end. Shouldn't be much more work.
         // Remove all non-alphanumeric characters from the beginning and end of the token, but not the middle
-        if(token.substring(0, 1).matches("\\W"))
+
+        while(token.substring(0, 1).matches("\\W") && token.length() > 0)
+        {
+            token = token.substring(1);
+            //If replacing the first character results in the string being empty, return an empty string.
+            if(token.isEmpty())
+                return "";
+        }
+        while(token.substring(token.length() - 1, token.length()).matches("\\W") && token.length() > 0)
+        {
+            token = token.substring(0, token.length() - 1);
+            //If replacing the last character results in the string being empty, return an empty string.
+            if(token.isEmpty())
+                return "";
+        }
+        //System.out.println("token: " + token);
+        return token;
+        
+        /*if(token.substring(0, 1).matches("\\W"))
         {
             token = token.substring(1);
             //If replacing the first character results in the string being empty, return an empty arraylist.
@@ -99,9 +118,7 @@ public class EnglishTokenProcessor implements TokenProcessor
             //If replacing the last character results in the string being empty, return an empty arraylist.
             if(token.isEmpty())
                 return "";
-        }
-
-        return token;
+        }*/
     }
 
     /**
@@ -144,7 +161,6 @@ public class EnglishTokenProcessor implements TokenProcessor
         englishStemmer stemmer = new englishStemmer();
         for(String word : tokens)
         {
-            //TODO: This usage seems proper, and gives correct results (I think)
             stemmer.setCurrent(word);
             stemmer.stem();
             String newWord = stemmer.getCurrent();

@@ -16,11 +16,16 @@ import java.util.Scanner;
 
 import javax.swing.JFileChooser;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.Time;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.io.Reader;
@@ -41,6 +46,7 @@ public class InvertedIndexRunner {
 			
 			while(!exit)
 			{
+				System.out.println("Enter a query: ");
 				String input = getUserInput(in);
 				//Special user inputs:
 				// :q quits the program.
@@ -70,15 +76,15 @@ public class InvertedIndexRunner {
 					for(Posting p : query.getPostings(index, processor))
 					{
 						returnedPostings++;
-						System.out.println("Document " + corpus.getDocument(p.getDocumentId()).getTitle());
+						System.out.println("Document ID " + p.getDocumentId() + ": " + corpus.getDocument(p.getDocumentId()).getTitle());
 					}
 					System.out.println("Number of documents found: " + returnedPostings);
+					//Select and print document?
+					selectAndPrintDocument(in, corpus);
 				}
 			}
 			in.close();
 			System.out.println("Exiting, good bye!");
-			
-		// TODO: fix this application so the user is asked for a term to search.
 		} 
 		catch (FileNotFoundException e) 
 		{
@@ -86,13 +92,16 @@ public class InvertedIndexRunner {
 		}
 		catch(RuntimeException e)
 		{
-			System.out.println("Error detected, exiting program.");
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
 	private static Index indexCorpus(DocumentCorpus corpus) {
 		EnglishTokenProcessor processor = new EnglishTokenProcessor();
-
+		Instant start = Instant.now();
 		// Constuct a TermDocumentMatrix once you know the size of the vocabulary.
 		// THEN, do the loop again! But instead of inserting into the HashSet, add terms to the index with addPosting.
 		InvertedPositionalIndex positionalIndex = new InvertedPositionalIndex();
@@ -111,17 +120,18 @@ public class InvertedIndexRunner {
 					positionalIndex.addTerm(processed, d.getId(), positionInDocument);
 			}
 		}
+		Instant finish = Instant.now();
+		long timeElapsed = Duration.between(start, finish).toSeconds();
+		System.out.println("Indexed in " + timeElapsed + " seconds.");
 		return positionalIndex;
 	}
 
 	private static String getUserInput(Scanner inputScanner)
 	{
 		
-		System.out.println("Enter a query: ");
+
 		System.out.print("> ");
 		String userInput = inputScanner.nextLine();
-		//Consume left over newline
-		//in.nextLine();
 		return userInput;
 	}
 
@@ -160,5 +170,23 @@ public class InvertedIndexRunner {
 			System.out.println(vocab.get(count));
 		}
 		System.out.println("Total vocabulary size: " + vocab.size());
+	}
+
+	private static void selectAndPrintDocument(Scanner inputScanner, DocumentCorpus corpus) throws IOException
+	{
+		System.out.println("Would you like to view one of these documents? \n" + 
+		"Enter it's ID to view, or type \"n\" to do another query.");
+		String selection = getUserInput(inputScanner);
+		//If the input starts with a digit, parse an int and print the doc.
+		if(selection.substring(0, 1).matches("[\\d]"))
+		{
+			int numSelection = Integer.parseInt(selection);
+			if(numSelection > 0)
+			{
+				Document selectedDoc = corpus.getDocument(numSelection);
+				BufferedReader reader = new BufferedReader(selectedDoc.getContent());
+				System.out.println(reader.readLine());
+			}
+		}
 	}
 }
