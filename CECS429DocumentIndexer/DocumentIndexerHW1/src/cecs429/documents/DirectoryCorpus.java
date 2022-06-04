@@ -142,6 +142,15 @@ public class DirectoryCorpus implements DocumentCorpus {
 	public void registerFileDocumentFactory(String fileExtension, FileDocumentFactory factory) {
 		mFactories.put(fileExtension, factory);
 	}
+
+	//TODO: Attempt at kinda-not-really generic loadDirectory
+	public static DirectoryCorpus loadDirectory(Path absolutePath)
+	{
+		DirectoryCorpus corpus = new DirectoryCorpus(absolutePath);
+		corpus.registerFileDocumentFactory(".txt", TextFileDocument::loadTextFileDocument);
+		corpus.registerFileDocumentFactory(".json", JsonFileDocument::loadJSONFileDocument);
+		return corpus;
+	}
 	
 	/**
 	 * Constructs a corpus over a directory of simple text documents.

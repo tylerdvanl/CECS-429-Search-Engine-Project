@@ -13,4 +13,6 @@ public interface TokenProcessor {
 
 	ArrayList<String> processTokenKeepHyphens(String token);
 
+	String stemSingleString(String token);
+
 }

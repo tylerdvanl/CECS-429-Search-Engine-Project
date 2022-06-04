@@ -10,6 +10,7 @@ import cecs429.indexes.Posting;
 import cecs429.text.BasicTokenProcessor;
 import cecs429.text.EnglishTokenProcessor;
 import cecs429.text.EnglishTokenStream;
+import cecs429.text.TokenProcessor;
 import cecs429.queries.*;
 
 import java.util.Scanner;
@@ -27,7 +28,9 @@ import java.sql.Time;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.io.Reader;
 
 public class InvertedIndexRunner {
@@ -39,7 +42,7 @@ public class InvertedIndexRunner {
 			Path directory = getPathFromUser();
 			EnglishTokenProcessor processor = new EnglishTokenProcessor();
 
-			DocumentCorpus corpus = DirectoryCorpus.loadJSONDirectory(directory, ".json");
+			DocumentCorpus corpus = DirectoryCorpus.loadDirectory(directory);
 			// Index the documents of the corpus.
 			Index index = indexCorpus(corpus);
 			boolean exit = false;
@@ -56,7 +59,7 @@ public class InvertedIndexRunner {
 				}
 				else if(input.startsWith(":stem"))
 				{
-					System.out.println("Placeholder special stem function");
+					menuStemToken(input, processor);
 				}
 				else if(input.startsWith(":index"))
 				{
@@ -80,7 +83,8 @@ public class InvertedIndexRunner {
 					}
 					System.out.println("Number of documents found: " + returnedPostings);
 					//Select and print document?
-					selectAndPrintDocument(in, corpus);
+					if(returnedPostings > 0)
+						selectAndPrintDocument(in, corpus);
 				}
 			}
 			in.close();
@@ -93,13 +97,14 @@ public class InvertedIndexRunner {
 		catch(RuntimeException e)
 		{
 			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (IOException e) 
+		{
 			e.printStackTrace();
 		}
 	}
 	
-	private static Index indexCorpus(DocumentCorpus corpus) {
+	private static Index indexCorpus(DocumentCorpus corpus) 
+	{
 		EnglishTokenProcessor processor = new EnglishTokenProcessor();
 		Instant start = Instant.now();
 		// Constuct a TermDocumentMatrix once you know the size of the vocabulary.
@@ -128,8 +133,6 @@ public class InvertedIndexRunner {
 
 	private static String getUserInput(Scanner inputScanner)
 	{
-		
-
 		System.out.print("> ");
 		String userInput = inputScanner.nextLine();
 		return userInput;
@@ -161,6 +164,14 @@ public class InvertedIndexRunner {
 	}
 
 	//Stem special query
+	private static void menuStemToken(String token, TokenProcessor processor)
+	{
+		//Grab the string that results after the first space.
+		List<String> tokens = Arrays.asList(token.split("\\s", 2));
+		token = tokens.get(1);
+		token = processor.stemSingleString(token);
+		System.out.println("Stemmed: " + token);
+	}
 	//Index special query
 	private static void printFirstThousandVocabAndTotal(Index index)
 	{
@@ -175,7 +186,7 @@ public class InvertedIndexRunner {
 	private static void selectAndPrintDocument(Scanner inputScanner, DocumentCorpus corpus) throws IOException
 	{
 		System.out.println("Would you like to view one of these documents? \n" + 
-		"Enter it's ID to view, or type \"n\" to do another query.");
+		"Enter its ID to view, or type \"n\" to do another query.");
 		String selection = getUserInput(inputScanner);
 		//If the input starts with a digit, parse an int and print the doc.
 		if(selection.substring(0, 1).matches("[\\d]"))
@@ -185,7 +196,15 @@ public class InvertedIndexRunner {
 			{
 				Document selectedDoc = corpus.getDocument(numSelection);
 				BufferedReader reader = new BufferedReader(selectedDoc.getContent());
-				System.out.println(reader.readLine());
+				boolean finished = false;
+				while(!finished)
+				{
+					String line = reader.readLine();
+					if(line != null)
+						System.out.println(reader.readLine());
+					else if(line == null)
+						finished = true;
+				}
 			}
 		}
 	}

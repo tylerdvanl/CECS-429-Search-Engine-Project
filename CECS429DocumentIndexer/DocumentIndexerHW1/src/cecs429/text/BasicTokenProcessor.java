@@ -20,4 +20,9 @@ public class BasicTokenProcessor implements TokenProcessor {
 	public ArrayList<String> processTokenKeepHyphens(String token) {
 		return this.processToken(token);
 	}
+
+	@Override
+	public String stemSingleString(String token) {
+		return this.processToken(token).get(0);
+	}
 }

@@ -169,4 +169,13 @@ public class EnglishTokenProcessor implements TokenProcessor
         //System.out.println("Tokens: " + tokens);
         return tokens;
     }
+
+    public String stemSingleString(String token)
+    {
+        englishStemmer stemmer = new englishStemmer();
+        stemmer.setCurrent(token);
+        stemmer.stem();
+        String newWord = stemmer.getCurrent();
+        return newWord;
+    }
 }
