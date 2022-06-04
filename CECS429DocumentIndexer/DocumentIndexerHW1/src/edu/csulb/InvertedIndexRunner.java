@@ -63,7 +63,8 @@ public class InvertedIndexRunner {
 				}
 				else if(input.startsWith(":index"))
 				{
-					System.out.println("Placeholder new index directory funtion.");
+					corpus = createNewCorpusFromInput(input);
+					index = indexCorpus(corpus);
 				}
 				else if(input.matches(":vocab"))
 				{
@@ -172,7 +173,17 @@ public class InvertedIndexRunner {
 		token = processor.stemSingleString(token);
 		System.out.println("Stemmed: " + token);
 	}
+	
 	//Index special query
+	private static DocumentCorpus createNewCorpusFromInput(String directoryInput)
+	{
+		List<String> inputs = Arrays.asList(directoryInput.split("\\s", 2));
+		String directory = inputs.get(1);
+		Path path = Paths.get(directory);
+		return DirectoryCorpus.loadDirectory(path);
+
+	}
+
 	private static void printFirstThousandVocabAndTotal(Index index)
 	{
 		ArrayList<String> vocab = new ArrayList<String>(index.getVocabulary());
@@ -201,7 +212,7 @@ public class InvertedIndexRunner {
 				{
 					String line = reader.readLine();
 					if(line != null)
-						System.out.println(reader.readLine());
+						System.out.println(line);
 					else if(line == null)
 						finished = true;
 				}
