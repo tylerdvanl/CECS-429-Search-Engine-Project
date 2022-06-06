@@ -14,6 +14,16 @@ public class InvertedPositionalIndex implements Index
         mIndex = new HashMap<String, ArrayList<Posting>>();
     }
 
+    public InvertedPositionalIndex(HashMap<String, ArrayList<Posting>> indexMap)
+    {
+        mIndex = indexMap;
+    }
+
+    public int indexSize()
+    {
+        return mIndex.size();
+    }
+
     @Override
     public List<Posting> getPostings(String term) 
     {

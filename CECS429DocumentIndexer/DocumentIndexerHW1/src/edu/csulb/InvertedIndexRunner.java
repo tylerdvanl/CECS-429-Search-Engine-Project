@@ -104,7 +104,7 @@ public class InvertedIndexRunner {
 		}
 	}
 	
-	private static Index indexCorpus(DocumentCorpus corpus) 
+	public static Index indexCorpus(DocumentCorpus corpus) 
 	{
 		EnglishTokenProcessor processor = new EnglishTokenProcessor();
 		Instant start = Instant.now();
