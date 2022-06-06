@@ -26,8 +26,20 @@ public class TermLiteral implements QueryComponent {
 	@Override
 	public List<Posting> getPostings(Index index, TokenProcessor processor) {
 		//Grab the first string that results from processing the term.
-		String literal = (processor.processToken(mTerm)).get(0);
-		return index.getPostings(literal);
+		List<String> literals = processor.processToken(mTerm);
+		if(literals.size() == 1)
+			return index.getPostings(literals.get(0));
+		
+		else
+		{
+			List<QueryComponent> terms = new ArrayList<>();
+			for (String literal : literals)
+			{
+				terms.add(new TermLiteral(literal));
+			}
+			QueryComponent newQuery = new OrQuery(terms);
+			return newQuery.getPostings(index, processor);
+		}
 	}
 	
 	@Override
