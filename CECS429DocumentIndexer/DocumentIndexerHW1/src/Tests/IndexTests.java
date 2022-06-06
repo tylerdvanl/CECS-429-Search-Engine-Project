@@ -7,6 +7,7 @@ import static org.junit.Assert.assertEquals;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 
 import org.junit.Test;
@@ -17,18 +18,45 @@ import edu.csulb.InvertedIndexRunner;
 
 public class IndexTests 
 {
+    //This should be redone
     @Test
     public void testIdenticalVocabularies()
     {
-        InvertedPositionalIndex controlIndex = setupControlIndex();
         DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
+
+        ArrayList<String> controlVocab = new ArrayList<>();
+        controlVocab.add("a");
+        controlVocab.add("anoth");
+        controlVocab.add("bug");
+        controlVocab.add("file");
+        controlVocab.add("find");
+        controlVocab.add("good");
+        controlVocab.add("help");
+        controlVocab.add("is");
+        controlVocab.add("last");
+        controlVocab.add("test");
+        controlVocab.add("the");
+        controlVocab.add("this");
         
-        assertEquals(controlIndex.getVocabulary(), testIndex.getVocabulary());
+        assertEquals(controlVocab, testIndex.getVocabulary());
+    }
+
+    //This may not be a great test, may redesign.
+    @Test
+    public void testIfIndexSorted()
+    {
+        Index controlIndex = setupControlIndex();
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
+
+        ArrayList<String> controlVocab = new ArrayList<>(controlIndex.getVocabulary());
+        Collections.sort(controlVocab);
+        assertEquals(controlVocab, testIndex.getVocabulary());
     }
 
     @Test
-    public void testMultipleOccurancesOfToken()
+    public void testMultipleOccurancesOfTokenInSingleDocument()
     {
         DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
@@ -39,7 +67,6 @@ public class IndexTests
         ArrayList<Integer> testPositions = testIndex.getPostings("good").get(0).getPositions();
 
         assertEquals(controlPositions, testPositions);
-
     }
 
     @Test
@@ -62,11 +89,11 @@ public class IndexTests
         testPositions4.add(3);
         testPositions5.add(5);
         ArrayList<Posting> testPostings = new ArrayList<>();
-        testPostings.add(new Posting(1, testPositions1));
-        testPostings.add(new Posting(2, testPositions2));
-        testPostings.add(new Posting(3, testPositions3));
-        testPostings.add(new Posting(4, testPositions4));
-        testPostings.add(new Posting(5, testPositions5));
+        testPostings.add(new Posting(0, testPositions1));
+        testPostings.add(new Posting(1, testPositions2));
+        testPostings.add(new Posting(2, testPositions3));
+        testPostings.add(new Posting(3, testPositions4));
+        testPostings.add(new Posting(4, testPositions5));
 
         assertEquals(testPostings.size(), testIndex.getPostings("test").size());
         for(int i = 0; i < testPostings.size(); i++)
@@ -79,57 +106,57 @@ public class IndexTests
     public InvertedPositionalIndex setupControlIndex()
     {
         HashMap<String, ArrayList<Posting>> controlMap = new HashMap<>();
-        //"a": [1: 3]
+        //"a": [0: 3]
         ArrayList<Integer> aPositions1 = new ArrayList<>();
-        aPositions1.add(1);
+        aPositions1.add(3);
         ArrayList<Posting> aPostings = new ArrayList<>();
-        aPostings.add(new Posting(1, aPositions1));
+        aPostings.add(new Posting(0, aPositions1));
         controlMap.put("a", aPostings);
 
-        //"anoth": [2: 3]
+        //"anoth": [1: 3]
         ArrayList<Integer> anothPositions1 = new ArrayList<>();
         anothPositions1.add(3);
         ArrayList<Posting> anothPostings = new ArrayList<>();
-        anothPostings.add(new Posting(2, anothPositions1));
+        anothPostings.add(new Posting(1, anothPositions1));
         controlMap.put("anoth", anothPostings);
 
-        //"bug": [3: 8]
+        //"bug": [2: 8]
         ArrayList<Integer> bugPositions1 = new ArrayList<>();
         bugPositions1.add(8);
         ArrayList<Posting> bugPostings = new ArrayList<>();
-        bugPostings.add(new Posting(3, bugPositions1));
+        bugPostings.add(new Posting(2, bugPositions1));
         controlMap.put("bug", bugPostings);
 
-        //"file": [5: 6]
+        //"file": [4: 6]
         ArrayList<Integer> filePositions1 = new ArrayList<>();
         filePositions1.add(6);
         ArrayList<Posting> filePostings = new ArrayList<>();
-        filePostings.add(new Posting(5, filePositions1));
+        filePostings.add(new Posting(4, filePositions1));
         controlMap.put("file", filePostings);
 
-        //"find": [3: 7]
+        //"find": [2: 7]
         ArrayList<Integer> findPositions1 = new ArrayList<>();
-        findPositions1.add(3);
+        findPositions1.add(7);
         ArrayList<Posting> findPostings = new ArrayList<>();
-        findPostings.add(new Posting(7, findPositions1));
+        findPostings.add(new Posting(2, findPositions1));
         controlMap.put("find", findPostings);
 
-        //"good": [3: 3, 7]
+        //"good": [2: 3, 4]
         ArrayList<Integer> goodPositions1 = new ArrayList<>();
         goodPositions1.add(3);
-        goodPositions1.add(7);
+        goodPositions1.add(4);
         ArrayList<Posting> goodPostings = new ArrayList<>();
-        goodPostings.add(new Posting(3, goodPositions1));
+        goodPostings.add(new Posting(2, goodPositions1));
         controlMap.put("good", goodPostings);
 
-        //"help": [3: 6]
+        //"help": [2: 6]
         ArrayList<Integer> helpPositions1 = new ArrayList<>();
         helpPositions1.add(6);
         ArrayList<Posting> helpPostings = new ArrayList<>();
-        helpPostings.add(new Posting(3, helpPositions1));
+        helpPostings.add(new Posting(2, helpPositions1));
         controlMap.put("help", helpPostings);
 
-        //"is": [1: 2], [2: 2], [3: 2], [5: 2]
+        //"is": [0: 2], [1: 2], [2: 2], [4: 2]
         ArrayList<Integer> isPositions1 = new ArrayList<>();
         ArrayList<Integer> isPositions2 = new ArrayList<>();
         ArrayList<Integer> isPositions3 = new ArrayList<>();
@@ -139,20 +166,20 @@ public class IndexTests
         isPositions3.add(2);
         isPositions4.add(2);
         ArrayList<Posting> isPostings = new ArrayList<>();
-        isPostings.add(new Posting(1, isPositions1));
-        isPostings.add(new Posting(2, isPositions2));
-        isPostings.add(new Posting(3, isPositions3));
-        isPostings.add(new Posting(5, isPositions4));
+        isPostings.add(new Posting(0, isPositions1));
+        isPostings.add(new Posting(1, isPositions2));
+        isPostings.add(new Posting(2, isPositions3));
+        isPostings.add(new Posting(4, isPositions4));
         controlMap.put("is", isPostings);
 
-        //"last": [5: 4]
+        //"last": [4: 4]
         ArrayList<Integer> lastPositions1 = new ArrayList<>();
         lastPositions1.add(4);
         ArrayList<Posting> lastPostings = new ArrayList<>();
-        lastPostings.add(new Posting(5, lastPositions1));
+        lastPostings.add(new Posting(4, lastPositions1));
         controlMap.put("last", lastPostings);
 
-        //"test": [1: 4], [2: 4], [3: 1, 5], [4: 1, 2, 3], [5: 5]
+        //"test": [0: 4], [1: 4], [2: 1, 5], [3: 1, 2, 3], [4: 5]
         ArrayList<Integer> testPositions1 = new ArrayList<>();
         ArrayList<Integer> testPositions2 = new ArrayList<>();
         ArrayList<Integer> testPositions3 = new ArrayList<>();
@@ -167,21 +194,21 @@ public class IndexTests
         testPositions4.add(3);
         testPositions5.add(5);
         ArrayList<Posting> testPostings = new ArrayList<>();
-        testPostings.add(new Posting(1, testPositions1));
-        testPostings.add(new Posting(2, testPositions2));
-        testPostings.add(new Posting(3, testPositions3));
-        testPostings.add(new Posting(4, testPositions4));
-        testPostings.add(new Posting(5, testPositions5));
+        testPostings.add(new Posting(0, testPositions1));
+        testPostings.add(new Posting(1, testPositions2));
+        testPostings.add(new Posting(2, testPositions3));
+        testPostings.add(new Posting(3, testPositions4));
+        testPostings.add(new Posting(4, testPositions5));
         controlMap.put("test", testPostings);
 
-        //"the": [5: 3]
+        //"the": [4: 3]
         ArrayList<Integer> thePositions1 = new ArrayList<>();
         thePositions1.add(3);
         ArrayList<Posting> thePostings = new ArrayList<>();
-        thePostings.add(new Posting(5, thePositions1));
+        thePostings.add(new Posting(4, thePositions1));
         controlMap.put("the", thePostings);
 
-        //"this": [1: 1], [2: 1], [3: 1]
+        //"this": [0: 1], [1: 1], [4: 1]
         ArrayList<Integer> thisPositions1 = new ArrayList<>();
         ArrayList<Integer> thisPositions2 = new ArrayList<>();
         ArrayList<Integer> thisPositions3 = new ArrayList<>();
@@ -189,9 +216,9 @@ public class IndexTests
         thisPositions2.add(1);
         thisPositions3.add(1);
         ArrayList<Posting> thisPostings = new ArrayList<>();
-        thisPostings.add(new Posting(1, thisPositions1));
-        thisPostings.add(new Posting(2, thisPositions2));
-        thisPostings.add(new Posting(3, thisPositions3));
+        thisPostings.add(new Posting(0, thisPositions1));
+        thisPostings.add(new Posting(1, thisPositions2));
+        thisPostings.add(new Posting(4, thisPositions3));
         controlMap.put("this", thisPostings);
 
         //All done, finally
