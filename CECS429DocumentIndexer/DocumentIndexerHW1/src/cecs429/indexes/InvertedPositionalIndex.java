@@ -53,6 +53,10 @@ public class InvertedPositionalIndex implements Index
     public void addTerm(String term, int docID, int position)
     {   
         //Check if the term exists in the index already.
+        //If the term is an empty string, do nothing.
+        if(term.matches(""))
+            return;
+            
         if(mIndex.containsKey(term))
         {
             //If the term exists in the index:

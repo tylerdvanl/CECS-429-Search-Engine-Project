@@ -132,6 +132,10 @@ public class EnglishTokenProcessor implements TokenProcessor
         {
             modified.add(token.replaceAll("[-]", ""));
             modified.addAll(Arrays.asList(token.split("[-]")));
+            for(int i = 0; i < modified.size(); i++)
+            {
+                modified.set(i, removeNonAlphanumeric(modified.get(i)));
+            }
             return modified;
         }
         
