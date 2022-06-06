@@ -101,10 +101,10 @@ public class EnglishTokenProcessor implements TokenProcessor
             lastIndex--;
         }
 
-        if(firstIndex >= token.length())
+        if(firstIndex >= token.length() || lastIndex <= firstIndex)
             return "";
-        //System.out.println("token: " + token);
-        return token.substring(firstIndex, lastIndex);
+        //System.out.println("token: " + token.substring(firstIndex, lastIndex));
+        return token.substring(firstIndex, lastIndex + 1);
     }
 
     /**
