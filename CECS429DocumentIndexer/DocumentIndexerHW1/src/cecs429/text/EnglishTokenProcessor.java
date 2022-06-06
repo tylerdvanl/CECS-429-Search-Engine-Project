@@ -85,40 +85,26 @@ public class EnglishTokenProcessor implements TokenProcessor
      */
     private String removeNonAlphanumeric(String token)
     {
-        //TODO: Loop until ALL special characters are removed from the beginning and end. Shouldn't be much more work.
         // Remove all non-alphanumeric characters from the beginning and end of the token, but not the middle
 
-        while(token.substring(0, 1).matches("\\W") && token.length() > 0)
+        int firstIndex = 0;
+        int lastIndex = token.length() - 1;
+
+
+        while(firstIndex < token.length() && !Character.isLetterOrDigit(token.charAt(firstIndex)))
         {
-            token = token.substring(1);
-            //If replacing the first character results in the string being empty, return an empty string.
-            if(token.isEmpty())
-                return "";
+            firstIndex++;
         }
-        while(token.substring(token.length() - 1, token.length()).matches("\\W") && token.length() > 0)
+
+        while(lastIndex >= firstIndex && !Character.isLetterOrDigit(token.charAt(lastIndex)))
         {
-            token = token.substring(0, token.length() - 1);
-            //If replacing the last character results in the string being empty, return an empty string.
-            if(token.isEmpty())
-                return "";
+            lastIndex--;
         }
+
+        if(firstIndex >= token.length())
+            return "";
         //System.out.println("token: " + token);
-        return token;
-        
-        /*if(token.substring(0, 1).matches("\\W"))
-        {
-            token = token.substring(1);
-            //If replacing the first character results in the string being empty, return an empty arraylist.
-            if(token.isEmpty())
-                return "";
-        }
-        if(token.substring(token.length() - 1, token.length()).matches("\\W"))
-        {
-            token = token.substring(0, token.length() - 1);
-            //If replacing the last character results in the string being empty, return an empty arraylist.
-            if(token.isEmpty())
-                return "";
-        }*/
+        return token.substring(firstIndex, lastIndex);
     }
 
     /**
