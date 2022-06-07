@@ -161,6 +161,36 @@ public class IndexTests
         assertEquals(anothPostings.get(0).getDocumentId(), testIndex.getPostings(word).get(0).getDocumentId());
     }
 
+    @Test
+    public void testAddTermEmpty()
+    {
+        InvertedPositionalIndex testIndex = new InvertedPositionalIndex();
+        testIndex.addTerm("test", 0 , 1);
+
+        ArrayList<Integer> controlPositions = new ArrayList<>();
+        controlPositions.add(1);
+
+        assertEquals(1, testIndex.getVocabulary().size());
+        assertEquals(0, testIndex.getPostings("test").get(0).getDocumentId());
+        assertEquals(controlPositions, testIndex.getPostings("test").get(0).getPositions());
+    }
+
+    @Test
+    public void testAddTermDuplicate()
+    {
+        InvertedPositionalIndex testIndex = new InvertedPositionalIndex();
+        testIndex.addTerm("test", 0 , 1);
+        testIndex.addTerm("test", 0 , 2);
+
+        ArrayList<Integer> controlPositions = new ArrayList<>();
+        controlPositions.add(1);
+        controlPositions.add(2);
+
+        assertEquals(1, testIndex.getVocabulary().size());
+        assertEquals(0, testIndex.getPostings("test").get(0).getDocumentId());
+        assertEquals(controlPositions, testIndex.getPostings("test").get(0).getPositions());
+    }
+
 
     public InvertedPositionalIndex setupControlIndex()
     {
