@@ -40,13 +40,26 @@ public class PhraseLiteral implements QueryComponent {
 			potentialMatches.add(index.getPostings(processor.processTokenKeepHyphens(term).get(0)));
 		}
 		
-		int targetDistance = 1;
-		result = this.positionalMerge(potentialMatches.get(0), potentialMatches.get(1), targetDistance);
-		for(int i = 2; i < potentialMatches.size(); i++)
+		//If there is only one potential match, return it.
+		if(potentialMatches.size() <= 1)
 		{
-			targetDistance++;
-			result = this.positionalMerge(result, potentialMatches.get(i), targetDistance);
+			for(List<Posting> postings : potentialMatches)
+			{
+				result.addAll(postings);
+			}
 		}
+		else
+		{
+			int targetDistance = 1;
+			result = this.positionalMerge(potentialMatches.get(0), potentialMatches.get(1), targetDistance);
+			for(int i = 2; i < potentialMatches.size(); i++)
+			{
+				targetDistance++;
+				result = this.positionalMerge(result, potentialMatches.get(i), targetDistance);
+			}
+		}
+
+
 		return result;
 	}
 	

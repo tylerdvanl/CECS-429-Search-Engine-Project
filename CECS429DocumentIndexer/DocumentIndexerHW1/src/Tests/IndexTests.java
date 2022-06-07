@@ -2,8 +2,6 @@ package Tests;
 
 import junit.*;
 
-import static org.junit.Assert.assertEquals;
-
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import cecs429.documents.*;
 import cecs429.indexes.*;

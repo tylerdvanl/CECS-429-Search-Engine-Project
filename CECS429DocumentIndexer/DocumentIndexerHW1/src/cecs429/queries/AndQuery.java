@@ -30,11 +30,22 @@ public class AndQuery implements QueryComponent {
 		}
 
 		//Merge the lists of postings.
-		//Merge the first 2 lists immediately.  Then, continue merging any additional lists into the results list.
-		result = this.mergePostingsAnd(potentialMatches.get(0), potentialMatches.get(1));
-		for(int i = 2; i < potentialMatches.size(); i++)
+		//If there is only one match, return it.
+		if(potentialMatches.size() <= 1)
 		{
-			result = this.mergePostingsAnd(result, potentialMatches.get(i));
+			for(List<Posting> postings : potentialMatches)
+			{
+				result.addAll(postings);
+			}
+		}
+		else
+		{
+			//Merge the first 2 lists immediately.  Then, continue merging any additional lists into the results list.
+			result = this.mergePostingsAnd(potentialMatches.get(0), potentialMatches.get(1));
+			for(int i = 2; i < potentialMatches.size(); i++)
+			{
+				result = this.mergePostingsAnd(result, potentialMatches.get(i));
+			}
 		}
 
 		return result;
