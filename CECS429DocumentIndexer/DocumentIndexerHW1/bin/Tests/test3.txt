@@ -1,0 +1,1 @@
+Testing is good! Good tests help find bugs.
