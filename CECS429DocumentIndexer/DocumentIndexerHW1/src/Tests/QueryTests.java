@@ -16,11 +16,13 @@ import edu.csulb.InvertedIndexRunner;
 public class QueryTests 
 {
 
+    String testPath = "C:\\Users\\tyler_rdl\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests";
+
     //AND queries
     @Test
     public void testAndSingleTerm()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -38,7 +40,7 @@ public class QueryTests
     @Test
     public void testAndSingleTermStemmed()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -57,7 +59,7 @@ public class QueryTests
     @Test
     public void testAndTwoTerms()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -78,7 +80,7 @@ public class QueryTests
     @Test
     public void testAndTwoTermsStemmed()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -99,7 +101,7 @@ public class QueryTests
     @Test
     public void testAndManyTerms()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -122,7 +124,7 @@ public class QueryTests
     @Test
     public void testAndManyTermsStemmed()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -146,7 +148,7 @@ public class QueryTests
     @Test
     public void testOrTwoTerms()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -167,7 +169,7 @@ public class QueryTests
     @Test
     public void testOrTwoTermsStemmed()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -189,7 +191,7 @@ public class QueryTests
     @Test
     public void testOrManyTerms()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -222,7 +224,7 @@ public class QueryTests
     @Test
     public void testOrManyTermsStemmed()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -257,7 +259,7 @@ public class QueryTests
     @Test
     public void testPhraseSingleTerm()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -275,7 +277,7 @@ public class QueryTests
     @Test
     public void testPhraseSingleTermStemmed()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -294,7 +296,7 @@ public class QueryTests
     @Test
     public void testPhraseTwoTerms()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -313,7 +315,7 @@ public class QueryTests
     @Test
     public void testPhraseTwoTermsStemmed()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -333,7 +335,7 @@ public class QueryTests
     @Test
     public void testPhraseManyTerms()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -352,7 +354,7 @@ public class QueryTests
     @Test
     public void testPhraseManyTermsStemmed()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -372,7 +374,7 @@ public class QueryTests
     @Test
     public void testHyphenQuery()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
         ArrayList<QueryComponent> testComponents = new ArrayList<>();
         EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
@@ -397,7 +399,7 @@ public class QueryTests
         @Test
         public void testHyphenQueryStemmed()
         {
-            DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+            DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
             Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
             ArrayList<QueryComponent> testComponents = new ArrayList<>();
             EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();

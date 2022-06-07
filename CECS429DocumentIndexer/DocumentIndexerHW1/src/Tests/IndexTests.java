@@ -19,11 +19,11 @@ import edu.csulb.InvertedIndexRunner;
 
 public class IndexTests 
 {
-    //This should be redone
+    String testPath = "C:\\Users\\tyler_rdl\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests";
     @Test
     public void testIdenticalVocabularies()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
 
         ArrayList<String> controlVocab = new ArrayList<>();
@@ -46,7 +46,7 @@ public class IndexTests
     @Test
     public void testVocabSizeEqual()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
 
         int controlSize = 12;
@@ -57,8 +57,8 @@ public class IndexTests
     @Test
     public void testMultipleOccurancesOfTokenInSingleDocument()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
-        Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
+                Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
 
         ArrayList<Integer> controlPositions = new ArrayList<>();
         controlPositions.add(3);
@@ -71,7 +71,7 @@ public class IndexTests
     @Test
     public void testMultiplePostingsOfToken1()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
 
         ArrayList<Integer> testPositions1 = new ArrayList<>();
@@ -105,7 +105,7 @@ public class IndexTests
     @Test
     public void testMultiplePostingsOfToken2()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
 
         ArrayList<Integer> thisPositions1 = new ArrayList<>();
@@ -130,7 +130,7 @@ public class IndexTests
     @Test
     public void testFindingWord()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
 
         ArrayList<Integer> goodPositions1 = new ArrayList<>();
@@ -146,7 +146,7 @@ public class IndexTests
     @Test
     public void testFindingStemmedWord()
     {
-        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
 
         ArrayList<Integer> anothPositions1 = new ArrayList<>();
