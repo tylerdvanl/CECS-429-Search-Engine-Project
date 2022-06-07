@@ -7,7 +7,6 @@ import org.tartarus.snowball.ext.englishStemmer;
 
 public class EnglishTokenProcessor implements TokenProcessor
 {
-
     /**
      * Normalizes a token into one or more terms.  Several steps occur, detailed in the function code.
      * @param token The token being processed
@@ -158,6 +157,12 @@ public class EnglishTokenProcessor implements TokenProcessor
         return tokens;
     }
 
+
+    /**
+     * Stems a single string and returns the result.
+     * @param token The string to be stemmed
+     * @return The result of the stem.
+     */
     public String stemSingleString(String token)
     {
         englishStemmer stemmer = new englishStemmer();

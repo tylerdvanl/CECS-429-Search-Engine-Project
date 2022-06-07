@@ -5,7 +5,6 @@ import java.util.List;
 
 import cecs429.indexes.Index;
 import cecs429.indexes.Posting;
-import cecs429.text.EnglishTokenProcessor;
 import cecs429.text.TokenProcessor;
 
 

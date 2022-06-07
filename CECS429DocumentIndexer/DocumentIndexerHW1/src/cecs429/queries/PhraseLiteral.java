@@ -6,7 +6,6 @@ import java.util.List;
 
 import cecs429.indexes.Index;
 import cecs429.indexes.Posting;
-import cecs429.text.EnglishTokenProcessor;
 import cecs429.text.TokenProcessor;
 
 /**
@@ -58,8 +57,6 @@ public class PhraseLiteral implements QueryComponent {
 				result = this.positionalMerge(result, potentialMatches.get(i), targetDistance);
 			}
 		}
-
-
 		return result;
 	}
 	
@@ -68,7 +65,14 @@ public class PhraseLiteral implements QueryComponent {
 		return "\"" + String.join(" ", mTerms) + "\"";
 	}
 
-	//TODO: Positional merge for phrase queries.  Duplicates are getting added for some reason, fix it.  Also, these queries seem to take a long time.
+	/**
+	 * Does a positional AND merge over two lists of postings.
+	 * @param postings1 The first list of postings to merge.
+	 * @param postings2 The second list of postings to merge.
+	 * @param targetDistance The difference that the positions of two postings with the same ID must match with.
+	 * @return Postings from matching docIDs that had positions at target distance away from each other.  The positions
+	 * 			of the result are pulled from the first postings list.
+	 */
 	List<Posting> positionalMerge(List<Posting> postings1, List<Posting> postings2, int targetDistance)
 	{
 		List<Posting> merged = new ArrayList<>();
@@ -127,6 +131,4 @@ public class PhraseLiteral implements QueryComponent {
 		//This is possible because this is an AND merge.
 		return merged;
 	}
-
-
 }

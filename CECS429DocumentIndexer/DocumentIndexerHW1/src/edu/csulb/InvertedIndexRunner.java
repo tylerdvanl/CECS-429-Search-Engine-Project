@@ -6,8 +6,6 @@ import cecs429.documents.DocumentCorpus;
 import cecs429.indexes.Index;
 import cecs429.indexes.InvertedPositionalIndex;
 import cecs429.indexes.Posting;
-//import cecs429.indexes.TermDocumentIndex;
-import cecs429.text.BasicTokenProcessor;
 import cecs429.text.EnglishTokenProcessor;
 import cecs429.text.EnglishTokenStream;
 import cecs429.text.TokenProcessor;
@@ -19,17 +17,14 @@ import javax.swing.JFileChooser;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Time;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.io.Reader;
 

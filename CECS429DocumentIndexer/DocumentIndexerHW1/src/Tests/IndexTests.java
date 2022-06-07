@@ -1,13 +1,8 @@
 package Tests;
 
-import junit.*;
-
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;

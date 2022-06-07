@@ -143,7 +143,6 @@ public class DirectoryCorpus implements DocumentCorpus {
 		mFactories.put(fileExtension, factory);
 	}
 
-	//TODO: Attempt at kinda-not-really generic loadDirectory
 	public static DirectoryCorpus loadDirectory(Path absolutePath)
 	{
 		DirectoryCorpus corpus = new DirectoryCorpus(absolutePath);

@@ -2,7 +2,6 @@ package Tests;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
