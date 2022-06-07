@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import org.junit.Test;
 
 import cecs429.documents.*;
 import cecs429.indexes.*;
+import cecs429.text.EnglishTokenProcessor;
 import edu.csulb.InvertedIndexRunner;
 
 public class IndexTests 
@@ -42,17 +44,15 @@ public class IndexTests
         assertEquals(controlVocab, testIndex.getVocabulary());
     }
 
-    //This may not be a great test, may redesign.
     @Test
-    public void testIfIndexSorted()
+    public void testVocabSizeEqual()
     {
-        Index controlIndex = setupControlIndex();
         DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
 
-        ArrayList<String> controlVocab = new ArrayList<>(controlIndex.getVocabulary());
-        Collections.sort(controlVocab);
-        assertEquals(controlVocab, testIndex.getVocabulary());
+        int controlSize = 12;
+
+        assertEquals(controlSize, testIndex.getVocabulary().size());
     }
 
     @Test
@@ -70,7 +70,7 @@ public class IndexTests
     }
 
     @Test
-    public void testMultiplePostingsOfToken()
+    public void testMultiplePostingsOfToken1()
     {
         DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
         Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
@@ -102,6 +102,65 @@ public class IndexTests
             assertEquals(testPostings.get(i).getPositions(), testIndex.getPostings("test").get(i).getPositions());
         }
     }
+
+    @Test
+    public void testMultiplePostingsOfToken2()
+    {
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
+
+        ArrayList<Integer> thisPositions1 = new ArrayList<>();
+        ArrayList<Integer> thisPositions2 = new ArrayList<>();
+        ArrayList<Integer> thisPositions3 = new ArrayList<>();
+        thisPositions1.add(1);
+        thisPositions2.add(1);
+        thisPositions3.add(1);
+        ArrayList<Posting> thisPostings = new ArrayList<>();
+        thisPostings.add(new Posting(0, thisPositions1));
+        thisPostings.add(new Posting(1, thisPositions2));
+        thisPostings.add(new Posting(4, thisPositions3));
+
+        assertEquals(thisPostings.size(), testIndex.getPostings("this").size());
+        for(int i = 0; i < thisPostings.size(); i++)
+        {
+            assertEquals(thisPostings.get(i).getDocumentId(), testIndex.getPostings("this").get(i).getDocumentId());
+            assertEquals(thisPostings.get(i).getPositions(), testIndex.getPostings("this").get(i).getPositions());
+        }
+    }
+
+    @Test
+    public void testFindingWord()
+    {
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
+
+        ArrayList<Integer> goodPositions1 = new ArrayList<>();
+        goodPositions1.add(3);
+        goodPositions1.add(4);
+        ArrayList<Posting> goodPostings = new ArrayList<>();
+        goodPostings.add(new Posting(2, goodPositions1));
+
+        assertEquals(goodPostings.get(0).getDocumentId(), testIndex.getPostings("good").get(0).getDocumentId());
+        assertEquals(goodPostings.get(0).getPositions(), testIndex.getPostings("good").get(0).getPositions());
+
+    }
+    @Test
+    public void testFindingStemmedWord()
+    {
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get("C:\\Users\\tyler\\OneDrive\\Documents\\GitHub\\CECS-429-Search-Engine-Project\\CECS429DocumentIndexer\\DocumentIndexerHW1\\src\\Tests"));
+        Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
+
+        ArrayList<Integer> anothPositions1 = new ArrayList<>();
+        anothPositions1.add(3);
+        ArrayList<Posting> anothPostings = new ArrayList<>();
+        anothPostings.add(new Posting(1, anothPositions1));
+
+        EnglishTokenProcessor processor = new EnglishTokenProcessor();
+        String word = processor.stemSingleString("another");
+
+        assertEquals(anothPostings.get(0).getDocumentId(), testIndex.getPostings(word).get(0).getDocumentId());
+    }
+
 
     public InvertedPositionalIndex setupControlIndex()
     {

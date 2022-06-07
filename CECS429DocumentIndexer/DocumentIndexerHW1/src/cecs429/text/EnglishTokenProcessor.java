@@ -101,7 +101,7 @@ public class EnglishTokenProcessor implements TokenProcessor
             lastIndex--;
         }
 
-        if(firstIndex >= token.length() || lastIndex <= firstIndex)
+        if(firstIndex >= token.length())
             return "";
         //System.out.println("token: " + token.substring(firstIndex, lastIndex));
         return token.substring(firstIndex, lastIndex + 1);
@@ -116,7 +116,6 @@ public class EnglishTokenProcessor implements TokenProcessor
      */
     private ArrayList<String> hyphenModification(String token)
     {
-        //TODO: If the orignal string has no hyphens, simply return it alone in the list.  In this case, there should be only one string in the return list.
         //For hyphens in words, do both:
         //  (a) Remove the hyphens from the token and then proceed with the modfied token;
         //  (b) Split the original hyphenated token into multiple tokens without a hyphen, and proceed with all split tokens.
@@ -137,8 +136,7 @@ public class EnglishTokenProcessor implements TokenProcessor
                 modified.set(i, removeNonAlphanumeric(modified.get(i)));
             }
             return modified;
-        }
-        
+        }  
     }
 
     /**
