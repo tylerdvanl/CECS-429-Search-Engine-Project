@@ -19,6 +19,7 @@ import cecs429.documents.DocumentCorpus;
 import cecs429.indexes.DiskIndexWriter;
 import cecs429.indexes.Index;
 import cecs429.indexes.InvertedPositionalIndex;
+import cecs429.indexes.Posting;
 import cecs429.text.EnglishTokenProcessor;
 import cecs429.text.EnglishTokenStream;
 
@@ -45,6 +46,13 @@ public class FileWritingRunner
 
 			System.out.println(index.getVocabulary().size());
 
+			int returnedPostings = 0;
+			for(Posting p : index.getPostings("whale"))
+			{
+				returnedPostings++;
+				System.out.println("Document ID " + p.getDocumentId() + ": " + corpus.getDocument(p.getDocumentId()).getTitle());
+			}
+			System.out.println("Number of documents found: " + returnedPostings);
         }
         catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
