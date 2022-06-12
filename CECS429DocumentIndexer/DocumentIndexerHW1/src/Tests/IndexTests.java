@@ -1,5 +1,6 @@
 package Tests;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +36,12 @@ public class IndexTests
         controlVocab.add("the");
         controlVocab.add("this");
         
-        assertEquals(controlVocab, testIndex.getVocabulary());
+        try {
+            assertEquals(controlVocab, testIndex.getVocabulary());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -46,7 +52,12 @@ public class IndexTests
 
         int controlSize = 12;
 
-        assertEquals(controlSize, testIndex.getVocabulary().size());
+        try {
+            assertEquals(controlSize, testIndex.getVocabulary().size());
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     @Test

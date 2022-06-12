@@ -179,7 +179,7 @@ public class InvertedIndexRunner {
 
 	}
 
-	private static void printFirstThousandVocabAndTotal(Index index)
+	private static void printFirstThousandVocabAndTotal(Index index) throws IOException
 	{
 		ArrayList<String> vocab = new ArrayList<String>(index.getVocabulary());
 		for(int count = 0; count < 1000 && count < vocab.size(); count++)

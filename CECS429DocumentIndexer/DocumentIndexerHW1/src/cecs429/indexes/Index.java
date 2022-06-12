@@ -1,5 +1,6 @@
 package cecs429.indexes;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -14,6 +15,7 @@ public interface Index {
 	
 	/**
 	 * A (sorted) list of all terms in the index vocabulary.
+	 * @throws IOException
 	 */
-	List<String> getVocabulary();
+	List<String> getVocabulary() throws IOException;
 }
