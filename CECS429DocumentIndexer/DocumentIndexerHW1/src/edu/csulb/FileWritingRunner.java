@@ -47,7 +47,7 @@ public class FileWritingRunner
 			System.out.println(index.getVocabulary().size());
 
 			int returnedPostings = 0;
-			for(Posting p : index.getPostings("whale"))
+			for(Posting p : index.getPostingsNoPositions("whale"))
 			{
 				returnedPostings++;
 				System.out.println("Document ID " + p.getDocumentId() + ": " + corpus.getDocument(p.getDocumentId()).getTitle());

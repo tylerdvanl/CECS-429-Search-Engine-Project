@@ -36,7 +36,7 @@ public class PhraseLiteral implements QueryComponent {
 		ArrayList<List<Posting>> potentialMatches = new ArrayList<>();
 		for(String term : mTerms)
 		{
-			potentialMatches.add(index.getPostings(processor.processTokenKeepHyphens(term).get(0)));
+			potentialMatches.add(index.getPostingsWithPositions(processor.processTokenKeepHyphens(term).get(0)));
 		}
 		
 		//If there is only one potential match, return it.

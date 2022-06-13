@@ -47,7 +47,7 @@ public class DiskIndexWriter
             {
                 startBytes.add(postingsDataOut.size());
                 termsToBytesTree.insert(term, postingsDataOut.size(), false);
-                List<Posting> postings = index.getPostings(term);
+                List<Posting> postings = index.getPostingsWithPositions(term);
                 postingsDataOut.writeInt(postings.size());
                 int previousID = 0;
                 for(Posting posting : postings) //surely that's not confusing//

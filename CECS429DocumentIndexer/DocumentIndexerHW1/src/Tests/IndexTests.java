@@ -69,7 +69,7 @@ public class IndexTests
         ArrayList<Integer> controlPositions = new ArrayList<>();
         controlPositions.add(3);
         controlPositions.add(4);
-        ArrayList<Integer> testPositions = testIndex.getPostings("good").get(0).getPositions();
+        ArrayList<Integer> testPositions = testIndex.getPostingsWithPositions("good").get(0).getPositions();
 
         assertEquals(controlPositions, testPositions);
     }
@@ -100,11 +100,11 @@ public class IndexTests
         testPostings.add(new Posting(3, testPositions4));
         testPostings.add(new Posting(4, testPositions5));
 
-        assertEquals(testPostings.size(), testIndex.getPostings("test").size());
+        assertEquals(testPostings.size(), testIndex.getPostingsWithPositions("test").size());
         for(int i = 0; i < testPostings.size(); i++)
         {
-            assertEquals(testPostings.get(i).getDocumentId(), testIndex.getPostings("test").get(i).getDocumentId());
-            assertEquals(testPostings.get(i).getPositions(), testIndex.getPostings("test").get(i).getPositions());
+            assertEquals(testPostings.get(i).getDocumentId(), testIndex.getPostingsWithPositions("test").get(i).getDocumentId());
+            assertEquals(testPostings.get(i).getPositions(), testIndex.getPostingsWithPositions("test").get(i).getPositions());
         }
     }
 
@@ -125,11 +125,11 @@ public class IndexTests
         thisPostings.add(new Posting(1, thisPositions2));
         thisPostings.add(new Posting(4, thisPositions3));
 
-        assertEquals(thisPostings.size(), testIndex.getPostings("this").size());
+        assertEquals(thisPostings.size(), testIndex.getPostingsWithPositions("this").size());
         for(int i = 0; i < thisPostings.size(); i++)
         {
-            assertEquals(thisPostings.get(i).getDocumentId(), testIndex.getPostings("this").get(i).getDocumentId());
-            assertEquals(thisPostings.get(i).getPositions(), testIndex.getPostings("this").get(i).getPositions());
+            assertEquals(thisPostings.get(i).getDocumentId(), testIndex.getPostingsWithPositions("this").get(i).getDocumentId());
+            assertEquals(thisPostings.get(i).getPositions(), testIndex.getPostingsWithPositions("this").get(i).getPositions());
         }
     }
 
@@ -145,8 +145,8 @@ public class IndexTests
         ArrayList<Posting> goodPostings = new ArrayList<>();
         goodPostings.add(new Posting(2, goodPositions1));
 
-        assertEquals(goodPostings.get(0).getDocumentId(), testIndex.getPostings("good").get(0).getDocumentId());
-        assertEquals(goodPostings.get(0).getPositions(), testIndex.getPostings("good").get(0).getPositions());
+        assertEquals(goodPostings.get(0).getDocumentId(), testIndex.getPostingsWithPositions("good").get(0).getDocumentId());
+        assertEquals(goodPostings.get(0).getPositions(), testIndex.getPostingsWithPositions("good").get(0).getPositions());
 
     }
     @Test
@@ -163,7 +163,7 @@ public class IndexTests
         EnglishTokenProcessor processor = new EnglishTokenProcessor();
         String word = processor.stemSingleString("another");
 
-        assertEquals(anothPostings.get(0).getDocumentId(), testIndex.getPostings(word).get(0).getDocumentId());
+        assertEquals(anothPostings.get(0).getDocumentId(), testIndex.getPostingsWithPositions(word).get(0).getDocumentId());
     }
 
     @Test
@@ -176,8 +176,8 @@ public class IndexTests
         controlPositions.add(1);
 
         assertEquals(1, testIndex.getVocabulary().size());
-        assertEquals(0, testIndex.getPostings("test").get(0).getDocumentId());
-        assertEquals(controlPositions, testIndex.getPostings("test").get(0).getPositions());
+        assertEquals(0, testIndex.getPostingsWithPositions("test").get(0).getDocumentId());
+        assertEquals(controlPositions, testIndex.getPostingsWithPositions("test").get(0).getPositions());
     }
 
     @Test
@@ -192,8 +192,8 @@ public class IndexTests
         controlPositions.add(2);
 
         assertEquals(1, testIndex.getVocabulary().size());
-        assertEquals(0, testIndex.getPostings("test").get(0).getDocumentId());
-        assertEquals(controlPositions, testIndex.getPostings("test").get(0).getPositions());
+        assertEquals(0, testIndex.getPostingsWithPositions("test").get(0).getDocumentId());
+        assertEquals(controlPositions, testIndex.getPostingsWithPositions("test").get(0).getPositions());
     }
 
 

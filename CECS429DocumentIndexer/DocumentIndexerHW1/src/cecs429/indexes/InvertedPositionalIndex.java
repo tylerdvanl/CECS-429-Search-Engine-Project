@@ -25,7 +25,7 @@ public class InvertedPositionalIndex implements Index
     }
 
     @Override
-    public List<Posting> getPostings(String term) 
+    public List<Posting> getPostingsWithPositions(String term) 
     {
         if(mIndex.containsKey(term))
             return mIndex.get(term);
@@ -88,5 +88,11 @@ public class InvertedPositionalIndex implements Index
             ArrayList<Posting> existingPostings = mIndex.get(term);
             existingPostings.add(new Posting(docID, position));
         }
+    }
+
+    @Override
+    public List<Posting> getPostingsNoPositions(String term) 
+    {
+        return getPostingsWithPositions(term);
     }
 }

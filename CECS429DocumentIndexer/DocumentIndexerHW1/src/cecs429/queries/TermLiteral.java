@@ -27,7 +27,7 @@ public class TermLiteral implements QueryComponent {
 		//Grab the first string that results from processing the term.
 		List<String> literals = processor.processToken(mTerm);
 		if(literals.size() == 1)
-			return index.getPostings(literals.get(0));
+			return index.getPostingsWithPositions(literals.get(0));
 		
 		else
 		{
