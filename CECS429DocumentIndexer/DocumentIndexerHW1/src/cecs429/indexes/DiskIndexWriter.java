@@ -21,11 +21,14 @@ public class DiskIndexWriter
         
         try 
         {
-            FileOutputStream fOut = new FileOutputStream("mobyDickCorpus\\index\\postings.bin");
-            DataOutputStream dOut = new DataOutputStream(fOut);
+            FileOutputStream postingsOut = new FileOutputStream("mobyDickCorpus\\index\\postings.bin");
+            DataOutputStream postingsDataOut = new DataOutputStream(postingsOut);
+            FileOutputStream weightsOut = new FileOutputStream("mobyDickCorpus\\index\\docWeights.bin");
+            DataOutputStream weightsDataOut = new DataOutputStream(weightsOut);
             RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
             BTree termsToBytesTree = createBTree(recordManager);
 
+            List<Double> termWeights = new ArrayList<>();
             List<String> vocabulary = index.getVocabulary();
 
             /*
@@ -42,27 +45,29 @@ public class DiskIndexWriter
              */
             for(String term : vocabulary)
             {
-                startBytes.add(dOut.size());
-                termsToBytesTree.insert(term, dOut.size(), false);
+                startBytes.add(postingsDataOut.size());
+                termsToBytesTree.insert(term, postingsDataOut.size(), false);
                 List<Posting> postings = index.getPostings(term);
-                dOut.writeInt(postings.size());
+                postingsDataOut.writeInt(postings.size());
                 int previousID = 0;
                 for(Posting posting : postings) //surely that's not confusing//
                 {
                     int currentID = posting.getDocumentId();
-                    dOut.writeInt(currentID - previousID);
+                    postingsDataOut.writeInt(currentID - previousID);
                     List<Integer> positions = posting.getPositions();
-                    dOut.writeInt(positions.size());
+                    postingsDataOut.writeInt(positions.size());
+                    termWeights.add(calculateTermWeight(positions.size()));
                     int previousPosition = 0;
                     for(int position : positions)
                     {
-                        dOut.writeInt(position - previousPosition);
+                        postingsDataOut.writeInt(position - previousPosition);
                         previousPosition = position;
                     }
                     previousID = currentID;
+                    weightsDataOut.writeDouble(calculateDocumentWeight(termWeights));
                 }
             }
-            dOut.close();  
+            postingsDataOut.close();  
             recordManager.commit();
         } 
         
@@ -79,6 +84,22 @@ public class DiskIndexWriter
         BTree tree = BTree.createInstance(recordManager, new StringComparator());
         recordManager.setNamedObject("TermsAndPositions", tree.getRecid());
         return tree;
+    }
+
+    private double calculateTermWeight(int termFrequency)
+    {
+        // 1+ ln([tftd])
+        return 1 + Math.log(termFrequency);
+    }
+
+    private double calculateDocumentWeight(List<Double> termWeights)
+    {
+        // Sqrt(SUM([wdt]^2))
+        double sum = 0.0;
+        for(Double weight : termWeights)
+            sum += Math.pow(weight, 2);
+        
+        return Math.sqrt(sum);
     }
 
 }
