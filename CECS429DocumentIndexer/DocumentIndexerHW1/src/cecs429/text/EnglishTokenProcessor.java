@@ -157,7 +157,6 @@ public class EnglishTokenProcessor implements TokenProcessor
         return tokens;
     }
 
-
     /**
      * Stems a single string and returns the result.
      * @param token The string to be stemmed

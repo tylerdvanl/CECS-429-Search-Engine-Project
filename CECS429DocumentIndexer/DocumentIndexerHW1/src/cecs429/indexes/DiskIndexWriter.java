@@ -67,7 +67,8 @@ public class DiskIndexWriter
                     weightsDataOut.writeDouble(calculateDocumentWeight(termWeights));
                 }
             }
-            postingsDataOut.close();  
+            postingsDataOut.close(); 
+            weightsDataOut.close();
             recordManager.commit();
         } 
         

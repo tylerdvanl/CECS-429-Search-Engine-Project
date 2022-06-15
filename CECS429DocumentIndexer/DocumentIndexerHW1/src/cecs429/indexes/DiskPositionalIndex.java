@@ -184,17 +184,37 @@ public class DiskPositionalIndex implements Index{
         return terms;
     }
 
-    private double getDocWeight(int docID) throws IOException
+    public double getDocWeight(int docID) throws IOException
     {
         //Open the docweights file, skip to the data for the docID (it should be sequential) then read the double and return it.
         double weight = 0.0;
-            final int DOUBLE_BYTE_SIZE = 8;
-            RandomAccessFile weightInfoFile = new RandomAccessFile("docWeights.bin", "r");
-            weightInfoFile.skipBytes(DOUBLE_BYTE_SIZE * docID);
-            weight = weightInfoFile.readDouble();
-            weightInfoFile.close();
-            return weight;
+        final int DOUBLE_BYTE_SIZE = 8;
+        RandomAccessFile weightInfoFile = new RandomAccessFile("docWeights.bin", "r");
+        weightInfoFile.skipBytes(DOUBLE_BYTE_SIZE * docID);
+        weight = weightInfoFile.readDouble();
+        weightInfoFile.close();
+        return weight;
     }
 
+    public double getTermWeightInDocument(String term, List<Integer> termStartBytes) throws IOException
+    {
+        //TODO: THIS IS COMPLETELY WRONG.
+        double termWeight = 0.0;
+        ArrayList<String> vocabularyList = new ArrayList<>();
+        vocabularyList.addAll(this.getVocabulary());
+        int bytes = termStartBytes.get(vocabularyList.indexOf(term));
+
+        RandomAccessFile indexFile = new RandomAccessFile("postings.bin", "r");
+        //We're at the beginning of the term; now we need to see how many documents have the term.
+        indexFile.seek(bytes);
+        int docFrequency = indexFile.readInt();
+        //For each doc, 
+        for(int i = 0; i < docFrequency; i++)
+        {
+
+        }
+
+        return termWeight;
+    } 
 
 }

@@ -18,14 +18,16 @@ public class PhraseLiteral implements QueryComponent {
 	/**
 	 * Constructs a PhraseLiteral with the given individual phrase terms.
 	 */
-	public PhraseLiteral(List<String> terms) {
+	public PhraseLiteral(List<String> terms) 
+	{
 		mTerms.addAll(terms);
 	}
 	
 	/**
 	 * Constructs a PhraseLiteral given a string with one or more individual terms separated by spaces.
 	 */
-	public PhraseLiteral(String terms) {
+	public PhraseLiteral(String terms) 
+	{
 		mTerms.addAll(Arrays.asList(terms.split(" ")));
 	}
 	
