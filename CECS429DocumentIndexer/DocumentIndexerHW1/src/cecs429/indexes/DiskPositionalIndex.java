@@ -51,18 +51,19 @@ public class DiskPositionalIndex implements Index{
             int documentFrequency = termInfoFile.readInt();
             
             //Grab the document IDs; recall that they are written as gaps.
+            //Then grab wdt
             ArrayList<Integer> documentIds = new ArrayList<>();
             int currentId = 0;
             for(int i = 0; i < documentFrequency - 1; i++)
             {
                 int gap = termInfoFile.readInt();
                 currentId += gap;
-                documentIds.add(currentId);              
-            }
-            //Once out of that loop, we have out docIDs, and now we need tftd for each document, and grab that many positions.  
-            for(int docNum = 0; docNum < documentFrequency - 1; docNum++)
-            {
-                int termFrequency = termInfoFile.readInt();
+                documentIds.add(currentId);
+                double weightDT = termInfoFile.readDouble();
+                int termFrequency = termInfoFile.readInt();  
+                
+                //TODO: this is also wrong, positions come immediately after the docID.
+                //Once out of that loop, we have out docIDs, and now we need tftd for each document, and grab that many positions. 
                 ArrayList<Integer> termPositions = new ArrayList<>();
                 int currentPosition = 0;
                 for(int j = 0; j < termFrequency - 1; j++)
@@ -71,7 +72,7 @@ public class DiskPositionalIndex implements Index{
                     currentPosition += posGap;
                     termPositions.add(currentPosition);
                 }
-                postings.add(new Posting(documentIds.get(docNum), termPositions));
+                postings.add(new Posting(documentIds.get(currentId), termPositions, weightDT));
             }
             termInfoFile.close();
             return postings;
@@ -133,13 +134,15 @@ public class DiskPositionalIndex implements Index{
             {
                 int gap = termInfoFile.readInt();
                 currentId += gap;
-                documentIds.add(currentId);              
-            }
-            //Once out of that loop, we have our docIDs.
-            for(int id : documentIds)  
-                postings.add(new Posting(id));
+                documentIds.add(currentId);  
+                double weightDT = termInfoFile.readDouble();
+                int termFrequency = termInfoFile.readInt();
+                //Skip the positions, we're not interested in them.
+                termInfoFile.skipBytes(4 * termFrequency);     
+                postings.add(new Posting(currentId, weightDT));
+            }   
             
-                termInfoFile.close();
+            termInfoFile.close();
             return postings;
         }
         catch (FileNotFoundException e) 

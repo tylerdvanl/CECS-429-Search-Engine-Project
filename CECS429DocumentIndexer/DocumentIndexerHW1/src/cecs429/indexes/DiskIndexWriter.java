@@ -42,6 +42,8 @@ public class DiskIndexWriter
                         C. Write the list of positions, each a 4-byte gap. (The first position is written as-is. All the
                         rest are gaps from the previous value.)
                     iv. Repeat for each term in the vocabulary.
+                    OPTIONAL ADDITION:
+                    I've added wdt to the postings in the file, fulfilling the DSP Index module.
              */
             for(String term : vocabulary)
             {
@@ -55,8 +57,11 @@ public class DiskIndexWriter
                     int currentID = posting.getDocumentId();
                     postingsDataOut.writeInt(currentID - previousID);
                     List<Integer> positions = posting.getPositions();
+                    //KEEP IN MIND: Doubles are 8 Bytes!  Ints are 4!
+                    Double termWeight = calculateTermWeight(positions.size());
+                    postingsDataOut.writeDouble(termWeight);
+                    termWeights.add(termWeight);
                     postingsDataOut.writeInt(positions.size());
-                    termWeights.add(calculateTermWeight(positions.size()));
                     int previousPosition = 0;
                     for(int position : positions)
                     {

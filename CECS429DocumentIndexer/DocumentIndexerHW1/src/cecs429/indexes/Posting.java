@@ -8,27 +8,58 @@ import java.util.ArrayList;
 public class Posting {
 	private int mDocumentId;
 	private ArrayList<Integer> mPositions;
+	private double mWeight;
 	
 	public Posting(int documentId, int position) {
 		mDocumentId = documentId;
 		mPositions = new ArrayList<Integer>();
 		mPositions.add(position);
+		mWeight = 0.0;
+	}
+
+	public Posting(int documentId, int position, double docWeight) {
+		mDocumentId = documentId;
+		mPositions = new ArrayList<Integer>();
+		mPositions.add(position);
+		mWeight = docWeight;
 	}
 
 	public Posting(int documentId, ArrayList<Integer> positions) {
 		mDocumentId = documentId;
 		mPositions = new ArrayList<Integer>();
 		mPositions.addAll(positions);
+		mWeight = 0.0;
+	}
+
+	public Posting(int documentId, ArrayList<Integer> positions, double docWeight) {
+		mDocumentId = documentId;
+		mPositions = new ArrayList<Integer>();
+		mPositions.addAll(positions);
+		mWeight = docWeight;
 	}
 
 	public Posting(int documentId)
 	{
 		mDocumentId = documentId;
 		mPositions = new ArrayList<Integer>();
+		mWeight = 0.0;
+	}
+
+	public Posting(int documentId, double docWeight)
+	{
+		mDocumentId = documentId;
+		mPositions = new ArrayList<Integer>();
+		mWeight = docWeight;
 	}
 	
-	public int getDocumentId() {
+	public int getDocumentId() 
+	{
 		return mDocumentId;
+	}
+
+	public double getWeight()
+	{
+		return mWeight;
 	}
 
 	/**
