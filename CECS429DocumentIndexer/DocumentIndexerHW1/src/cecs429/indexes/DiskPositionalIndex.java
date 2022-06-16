@@ -30,7 +30,6 @@ public class DiskPositionalIndex implements Index{
         {
             ArrayList<Posting> postings = new ArrayList<>();
             RandomAccessFile termInfoFile = new RandomAccessFile("postings.bin", "r");
-
             RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
             long bTreeId = recordManager.getNamedObject("TermsAndPositions");
             BTree tree;
@@ -157,8 +156,6 @@ public class DiskPositionalIndex implements Index{
         }
         return null;
     }
-    
-    
 
     @Override
     public List<String> getVocabulary() throws IOException {
@@ -183,8 +180,41 @@ public class DiskPositionalIndex implements Index{
                 terms.add((String) browsedTuple.getKey()); //I hate casting, but I think I have to do it here.
             }
         }
-
         return terms;
+    }
+
+    @Override
+    public int getDocumentFrequency(String term)
+    {
+        try
+        {
+            RandomAccessFile termInfoFile = new RandomAccessFile("postings.bin", "r");
+            RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
+            long bTreeId = recordManager.getNamedObject("TermsAndPositions");
+            BTree tree;
+    
+            //If the btree could not load, just return an empty arraylist.
+            if(bTreeId == 0)
+            {
+                System.out.println("Could not load tree");
+                termInfoFile.close();
+                return 0;
+            }
+            
+            tree = BTree.load(recordManager, bTreeId);
+            System.out.println("Debug: Loaded tree with nodes: " + tree.size());
+            int startBytes = (int) tree.find(term); // casting, blegh
+            termInfoFile.seek(startBytes);
+            //read the next int: dft, save it.
+            int documentFrequency = termInfoFile.readInt();
+            termInfoFile.close();
+            return documentFrequency;
+        }
+        catch(IOException e)
+        {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     public double getDocWeight(int docID) throws IOException
@@ -198,26 +228,4 @@ public class DiskPositionalIndex implements Index{
         weightInfoFile.close();
         return weight;
     }
-
-    public double getTermWeightInDocument(String term, List<Integer> termStartBytes) throws IOException
-    {
-        //TODO: THIS IS COMPLETELY WRONG.
-        double termWeight = 0.0;
-        ArrayList<String> vocabularyList = new ArrayList<>();
-        vocabularyList.addAll(this.getVocabulary());
-        int bytes = termStartBytes.get(vocabularyList.indexOf(term));
-
-        RandomAccessFile indexFile = new RandomAccessFile("postings.bin", "r");
-        //We're at the beginning of the term; now we need to see how many documents have the term.
-        indexFile.seek(bytes);
-        int docFrequency = indexFile.readInt();
-        //For each doc, 
-        for(int i = 0; i < docFrequency; i++)
-        {
-
-        }
-
-        return termWeight;
-    } 
-
 }

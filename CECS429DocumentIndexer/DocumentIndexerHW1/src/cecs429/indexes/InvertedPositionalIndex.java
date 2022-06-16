@@ -95,4 +95,10 @@ public class InvertedPositionalIndex implements Index
     {
         return getPostingsWithPositions(term);
     }
+
+    @Override
+    public int getDocumentFrequency(String term) 
+    {
+        return getPostingsNoPositions(term).size();
+    }
 }
