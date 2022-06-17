@@ -2,6 +2,7 @@ package cecs429.queries;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
@@ -11,6 +12,8 @@ import cecs429.indexes.DiskPositionalIndex;
 import cecs429.indexes.Index;
 import cecs429.indexes.Posting;
 import cecs429.text.TokenProcessor;
+import cecs429.utilities.DocIdScorePair;
+import cecs429.utilities.DocIdScorePairSortByScore;
 
 public class RankedQuery{
 
@@ -21,14 +24,15 @@ public class RankedQuery{
         mTerms.addAll(terms);
     }
 
-    public PriorityQueue<HashMap<Integer, Double>> getTopTen(DiskPositionalIndex index, List<String> terms, DocumentCorpus corpus) throws IOException {
+    public List<DocIdScorePair> getTopTen(DiskPositionalIndex index, List<String> terms, DocumentCorpus corpus) throws IOException {
         //TODO: In ranked query mode, you must process a query without any Boolean operators and return the top K = 10
         //documents satisfying the query
         //For each term, get its postings.  Create an accumulator for each document found, and score the document according to 
         //the provided formulas.  Add that score to the document's accumulator score.  At the end, add the documents to a
         //priority queue.  
         HashMap<Integer, Double> docsAndRanks = new HashMap<>();
-        PriorityQueue<HashMap<Posting, Double>> resultingScoresAndPostings = new PriorityQueue<>();
+        PriorityQueue<DocIdScorePair> resultingScoresAndPostings = new PriorityQueue<DocIdScorePair>(new DocIdScorePairSortByScore());
+        ArrayList<DocIdScorePair> topTen = new ArrayList<>();
 
         for(String term : terms)
         {
@@ -58,12 +62,16 @@ public class RankedQuery{
             for(int docId : docsAndRanks.keySet())
             {
                 docsAndRanks.put(docId, normalizeAccumulatorScore(docId, docsAndRanks.get(docId), index));
-                
+                resultingScoresAndPostings.add(new DocIdScorePair(docId, docsAndRanks.get(docId)));
             }
-            
 
+            //Put the top 10 from the priority queue and put them in a list.
+            for(int i = 0; i < 10; i++)
+            {
+                topTen.add(resultingScoresAndPostings.poll());
+            }
         }
-        return null;
+        return topTen;
     }
 
     private double calculateQueryWeight(String term, Index index, DocumentCorpus corpus) throws IOException
@@ -78,7 +86,4 @@ public class RankedQuery{
     {
         return accumulator/(index.getDocWeight(docId));
     }
-
-    
-    
 }
