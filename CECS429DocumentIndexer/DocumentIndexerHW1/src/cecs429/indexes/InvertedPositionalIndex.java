@@ -19,7 +19,8 @@ public class InvertedPositionalIndex implements Index
         mIndex = indexMap;
     }
 
-    public int indexSize()
+    @Override
+    public long indexSize()
     {
         return mIndex.size();
     }

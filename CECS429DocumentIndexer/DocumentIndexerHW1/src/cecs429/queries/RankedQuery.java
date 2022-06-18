@@ -24,7 +24,7 @@ public class RankedQuery{
         mQuery = query;
     }
 
-    public List<DocIdScorePair> getTopTen(Index index, TokenProcessor processor, DocumentCorpus corpus) throws IOException {
+    public List<DocIdScorePair> getTopTen(Index index, TokenProcessor processor, int corpusSize) throws IOException {
         //TODO: In ranked query mode, you must process a query without any Boolean operators and return the top K = 10
         //documents satisfying the query
         //For each term, get its postings.  Create an accumulator for each document found, and score the document according to 
@@ -43,7 +43,7 @@ public class RankedQuery{
             {
                 double acc = 0.0;
                 double wdt = posting.getWeight();
-                double wqt = calculateQueryWeight(term, index, corpus);
+                double wqt = calculateQueryWeight(term, index, corpusSize);
                 //If the map contains the document already, update it's accumulator(score) value
                 if(docsAndRanks.containsKey(posting.getDocumentId()))
                 {
@@ -77,12 +77,12 @@ public class RankedQuery{
         return topTen;
     }
 
-    private double calculateQueryWeight(String term, Index index, DocumentCorpus corpus) throws IOException
+    private double calculateQueryWeight(String term, Index index, int corpusSize) throws IOException
     {
         // ln(1+(N/dft))
         //dft is the first int in the binary file, so should be easy to just jump to it, using the binary tree, and grab from it.
         double dft = index.getDocumentFrequency(term); //int return gets transformed into a double here.
-        return Math.log((1 + (corpus.getCorpusSize()/dft)));
+        return Math.log((1 + (double) corpusSize/dft));
     }
 
     private double normalizeAccumulatorScore(int docId, Double accumulator, Index index) throws IOException

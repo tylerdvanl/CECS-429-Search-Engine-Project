@@ -1,5 +1,6 @@
 package cecs429.indexes;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -27,4 +28,6 @@ public interface Index {
 	List<String> getVocabulary() throws IOException;
 
 	double getDocWeight(int docId) throws IOException;
+
+	long indexSize() throws FileNotFoundException, IOException;
 }

@@ -29,7 +29,7 @@ public class DiskPositionalIndex implements Index{
         ArrayList<Posting> postings = new ArrayList<>();
         try 
         {
-            RandomAccessFile termInfoFile = new RandomAccessFile("mobyDickCorpus\\index\\postings.bin", "r");
+            RandomAccessFile termInfoFile = new RandomAccessFile("index\\postings.bin", "r");
             RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
             long bTreeId = recordManager.getNamedObject("TermsAndPositions");
             BTree tree;
@@ -43,7 +43,6 @@ public class DiskPositionalIndex implements Index{
             }
             
             tree = BTree.load(recordManager, bTreeId);
-            System.out.println("Debug: Loaded tree with nodes: " + tree.size());
             int startBytes = (int) tree.find(term); // casting, blegh
             try{
                 termInfoFile.seek(startBytes);
@@ -112,7 +111,7 @@ public class DiskPositionalIndex implements Index{
         try 
         {
             ArrayList<Posting> postings = new ArrayList<>();
-            RandomAccessFile termInfoFile = new RandomAccessFile("mobyDickCorpus\\index\\postings.bin", "r");
+            RandomAccessFile termInfoFile = new RandomAccessFile("index\\postings.bin", "r");
 
             RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
             long bTreeId = recordManager.getNamedObject("TermsAndPositions");
@@ -193,7 +192,7 @@ public class DiskPositionalIndex implements Index{
     {
         try
         {
-            RandomAccessFile termInfoFile = new RandomAccessFile("mobyDickCorpus\\index\\postings.bin", "r");
+            RandomAccessFile termInfoFile = new RandomAccessFile("index\\postings.bin", "r");
             RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
             long bTreeId = recordManager.getNamedObject("TermsAndPositions");
             BTree tree;
@@ -226,10 +225,17 @@ public class DiskPositionalIndex implements Index{
         //Open the docweights file, skip to the data for the docID (it should be sequential) then read the double and return it.
         double weight = 0.0;
         final int DOUBLE_BYTE_SIZE = 8;
-        RandomAccessFile weightInfoFile = new RandomAccessFile("mobyDickCorpus\\index\\docWeights.bin", "r");
+        RandomAccessFile weightInfoFile = new RandomAccessFile("index\\docWeights.bin", "r");
         weightInfoFile.skipBytes(DOUBLE_BYTE_SIZE * docID);
         weight = weightInfoFile.readDouble();
         weightInfoFile.close();
         return weight;
+    }
+
+    @Override
+    public long indexSize() throws IOException 
+    {
+        RandomAccessFile weightInfoFile = new RandomAccessFile("index\\docWeights.bin", "r");
+        return weightInfoFile.length()/8;
     }
 }

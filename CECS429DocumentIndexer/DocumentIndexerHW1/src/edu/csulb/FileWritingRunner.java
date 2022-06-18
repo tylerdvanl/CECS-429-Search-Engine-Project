@@ -39,31 +39,50 @@ public class FileWritingRunner
     {
         try 
         {
-            Scanner in = new Scanner(System.in);
+			Scanner in = new Scanner(System.in);
             Path directory;
-            Path savePath = Paths.get("mobyDickCorpus\\index\\");
-            directory = getPathFromUser();
-            EnglishTokenProcessor processor = new EnglishTokenProcessor();
-            DiskIndexWriter indexWriter = new DiskIndexWriter();
+            Path savePath = Paths.get("index\\");
 
-            DocumentCorpus corpus = DirectoryCorpus.loadDirectory(directory);
-            // Index the documents of the corpus.
-            Index index = indexCorpus(corpus);
 			Index diskIndex = new DiskPositionalIndex();
-
-            ArrayList<Integer> bytePositions = indexWriter.writeIndex(index, savePath);
-			System.out.println("Finished Indexing");
-
-			System.out.println(diskIndex.getVocabulary().size());
-
-			ArrayList<DocIdScorePair> IdsAndScores = new ArrayList<>();
-			RankedQuery testQuery = new RankedQuery("whale");
-			IdsAndScores.addAll(testQuery.getTopTen(diskIndex, processor, corpus));
-			System.out.println("done!");
-
-			for(DocIdScorePair pair : IdsAndScores)
+			EnglishTokenProcessor processor = new EnglishTokenProcessor();
+			directory = getPathFromUser();
+			DocumentCorpus corpus = DirectoryCorpus.loadDirectory(directory);
+			boolean exit = false;
+			
+			while(!exit)
 			{
-				System.out.println("Document ID " + pair.getId() + " : " + corpus.getDocument(pair.getId()).getTitle() + " || Score : " + pair.getScore());
+				System.out.println("1.) Index a corpus");
+				System.out.println("2.) Perform queries");
+				String modeChoice = getUserInput(in);
+				
+	
+				//Index a corpus and write it out to file.
+				if(modeChoice.matches("1"))
+				{
+					DiskIndexWriter indexWriter = new DiskIndexWriter();
+	
+					// Index the documents of the corpus.
+					Index index = indexCorpus(corpus);
+					ArrayList<Integer> bytePositions = indexWriter.writeIndex(index, savePath);
+					System.out.println("Finished Indexing");
+				}
+				else if(modeChoice.matches("2"))
+				{
+					//Ask to do ranked query or boolean query.  Both modes should allow the special queries to work.
+					int corpusSize = corpus.getCorpusSize();
+					System.out.println(diskIndex.getVocabulary().size());
+	
+					ArrayList<DocIdScorePair> IdsAndScores = new ArrayList<>();
+					RankedQuery testQuery = new RankedQuery("strenuous");
+					IdsAndScores.addAll(testQuery.getTopTen(diskIndex, processor, corpusSize));
+					System.out.println("done!");
+		
+					for(DocIdScorePair pair : IdsAndScores)
+					{
+						System.out.println("Document ID " + pair.getId() + " : " + corpus.getDocument(pair.getId()).getTitle() + " || Score : " + pair.getScore());
+					}
+					exit = true;
+				}
 			}
         }
         catch (FileNotFoundException e) {

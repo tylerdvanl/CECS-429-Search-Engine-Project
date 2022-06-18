@@ -26,9 +26,9 @@ public class DiskIndexWriter
         Instant start = Instant.now();
         try 
         {
-            FileOutputStream postingsOut = new FileOutputStream("mobyDickCorpus\\index\\postings.bin");
+            FileOutputStream postingsOut = new FileOutputStream("index\\postings.bin");
             DataOutputStream postingsDataOut = new DataOutputStream(postingsOut);
-            FileOutputStream weightsOut = new FileOutputStream("mobyDickCorpus\\index\\docWeights.bin");
+            FileOutputStream weightsOut = new FileOutputStream("index\\docWeights.bin");
             DataOutputStream weightsDataOut = new DataOutputStream(weightsOut);
             RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
             BTree termsToBytesTree = createBTree(recordManager);
@@ -120,7 +120,7 @@ public class DiskIndexWriter
         }
         Instant finish = Instant.now();
 		long timeElapsed = Duration.between(start, finish).toSeconds();
-		System.out.println("Saved to disk in " + timeElapsed + " seconds.");        
+		System.out.println("Saved to disk in " + timeElapsed + " seconds.");      
         return startBytes;
     }
 
