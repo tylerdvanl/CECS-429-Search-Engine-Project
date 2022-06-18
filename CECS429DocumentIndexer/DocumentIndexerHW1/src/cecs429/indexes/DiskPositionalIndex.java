@@ -1,5 +1,6 @@
 package cecs429.indexes;
 
+import java.io.EOFException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -25,11 +26,10 @@ public class DiskPositionalIndex implements Index{
         *   This should give us the postings we require.
         *   Uses seek on a RandomAccessFile object.
         */
-
+        ArrayList<Posting> postings = new ArrayList<>();
         try 
         {
-            ArrayList<Posting> postings = new ArrayList<>();
-            RandomAccessFile termInfoFile = new RandomAccessFile("postings.bin", "r");
+            RandomAccessFile termInfoFile = new RandomAccessFile("mobyDickCorpus\\index\\postings.bin", "r");
             RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
             long bTreeId = recordManager.getNamedObject("TermsAndPositions");
             BTree tree;
@@ -45,36 +45,43 @@ public class DiskPositionalIndex implements Index{
             tree = BTree.load(recordManager, bTreeId);
             System.out.println("Debug: Loaded tree with nodes: " + tree.size());
             int startBytes = (int) tree.find(term); // casting, blegh
-            termInfoFile.seek(startBytes);
-            //read the next int: dft, save it.
-            int documentFrequency = termInfoFile.readInt();
-            
-            //Grab the document IDs; recall that they are written as gaps.
-            //Then grab wdt
-            ArrayList<Integer> documentIds = new ArrayList<>();
-            int currentId = 0;
-            for(int i = 0; i < documentFrequency - 1; i++)
-            {
-                int gap = termInfoFile.readInt();
-                currentId += gap;
-                documentIds.add(currentId);
-                double weightDT = termInfoFile.readDouble();
-                int termFrequency = termInfoFile.readInt();  
+            try{
+                termInfoFile.seek(startBytes);
+                //read the next int: dft, save it.
+                int documentFrequency = termInfoFile.readInt();
                 
-                //TODO: this is also wrong, positions come immediately after the docID.
-                //Once out of that loop, we have out docIDs, and now we need tftd for each document, and grab that many positions. 
-                ArrayList<Integer> termPositions = new ArrayList<>();
-                int currentPosition = 0;
-                for(int j = 0; j < termFrequency - 1; j++)
+                //Grab the document IDs; recall that they are written as gaps.
+                //Then grab wdt
+                ArrayList<Integer> documentIds = new ArrayList<>();
+                int currentId = 0;
+                for(int i = 0; i < documentFrequency; i++)
                 {
-                    int posGap = termInfoFile.readInt();
-                    currentPosition += posGap;
-                    termPositions.add(currentPosition);
+                    int gap = termInfoFile.readInt();
+                    currentId += gap;
+                    documentIds.add(currentId);
+                    double weightDT = termInfoFile.readDouble();
+                    int termFrequency = termInfoFile.readInt();  
+                    
+                    //TODO: this is also wrong, positions come immediately after the docID.
+                    //Once out of that loop, we have out docIDs, and now we need tftd for each document, and grab that many positions. 
+                    ArrayList<Integer> termPositions = new ArrayList<>();
+                    int currentPosition = 0;
+                    for(int j = 0; j < termFrequency; j++)
+                    {
+                        int posGap = termInfoFile.readInt();
+                        currentPosition += posGap;
+                        termPositions.add(currentPosition);
+                    }
+                    postings.add(new Posting(documentIds.get(i), termPositions, weightDT));
                 }
-                postings.add(new Posting(documentIds.get(currentId), termPositions, weightDT));
             }
+            catch(EOFException e)
+            {
+                System.out.println("End of FIle");
+            }
+            
             termInfoFile.close();
-            return postings;
+
         }
         catch (FileNotFoundException e) 
         {
@@ -86,7 +93,7 @@ public class DiskPositionalIndex implements Index{
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        return null;
+        return postings;
     }
 
     @Override
@@ -105,7 +112,7 @@ public class DiskPositionalIndex implements Index{
         try 
         {
             ArrayList<Posting> postings = new ArrayList<>();
-            RandomAccessFile termInfoFile = new RandomAccessFile("postings.bin", "r");
+            RandomAccessFile termInfoFile = new RandomAccessFile("mobyDickCorpus\\index\\postings.bin", "r");
 
             RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
             long bTreeId = recordManager.getNamedObject("TermsAndPositions");
@@ -129,7 +136,7 @@ public class DiskPositionalIndex implements Index{
             //Grab the document IDs; recall that they are written as gaps.
             ArrayList<Integer> documentIds = new ArrayList<>();
             int currentId = 0;
-            for(int i = 0; i < documentFrequency - 1; i++)
+            for(int i = 0; i < documentFrequency; i++)
             {
                 int gap = termInfoFile.readInt();
                 currentId += gap;
@@ -188,7 +195,7 @@ public class DiskPositionalIndex implements Index{
     {
         try
         {
-            RandomAccessFile termInfoFile = new RandomAccessFile("postings.bin", "r");
+            RandomAccessFile termInfoFile = new RandomAccessFile("mobyDickCorpus\\index\\postings.bin", "r");
             RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
             long bTreeId = recordManager.getNamedObject("TermsAndPositions");
             BTree tree;
@@ -222,7 +229,7 @@ public class DiskPositionalIndex implements Index{
         //Open the docweights file, skip to the data for the docID (it should be sequential) then read the double and return it.
         double weight = 0.0;
         final int DOUBLE_BYTE_SIZE = 8;
-        RandomAccessFile weightInfoFile = new RandomAccessFile("docWeights.bin", "r");
+        RandomAccessFile weightInfoFile = new RandomAccessFile("mobyDickCorpus\\index\\docWeights.bin", "r");
         weightInfoFile.skipBytes(DOUBLE_BYTE_SIZE * docID);
         weight = weightInfoFile.readDouble();
         weightInfoFile.close();

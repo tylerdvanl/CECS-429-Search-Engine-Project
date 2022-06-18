@@ -12,6 +12,16 @@ public class DocIdScorePair {
         mDocId = docId;
         mScore = score;
     }
+    
+    public int getId()
+    {   
+        return mDocId;
+    }
+
+    public double getScore()
+    {
+        return mScore;
+    }
 
 
 }

@@ -7,7 +7,7 @@ public class DocIdScorePairSortByScore implements Comparator<DocIdScorePair>
     @Override
     public int compare(DocIdScorePair o1, DocIdScorePair o2) 
     {
-        return Double.compare(o1.mScore, o2.mScore);
+        return -Double.compare(o1.mScore, o2.mScore);
     }
     
 }

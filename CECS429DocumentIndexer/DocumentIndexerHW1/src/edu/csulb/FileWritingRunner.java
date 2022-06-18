@@ -17,11 +17,14 @@ import cecs429.documents.DirectoryCorpus;
 import cecs429.documents.Document;
 import cecs429.documents.DocumentCorpus;
 import cecs429.indexes.DiskIndexWriter;
+import cecs429.indexes.DiskPositionalIndex;
 import cecs429.indexes.Index;
 import cecs429.indexes.InvertedPositionalIndex;
 import cecs429.indexes.Posting;
+import cecs429.queries.RankedQuery;
 import cecs429.text.EnglishTokenProcessor;
 import cecs429.text.EnglishTokenStream;
+import cecs429.utilities.DocIdScorePair;
 
 public class FileWritingRunner 
 {
@@ -40,19 +43,22 @@ public class FileWritingRunner
             DocumentCorpus corpus = DirectoryCorpus.loadDirectory(directory);
             // Index the documents of the corpus.
             Index index = indexCorpus(corpus);
+			Index diskIndex = new DiskPositionalIndex();
 
             ArrayList<Integer> bytePositions = indexWriter.writeIndex(index, savePath);
 			System.out.println("Finished Indexing");
 
-			System.out.println(index.getVocabulary().size());
+			System.out.println(diskIndex.getVocabulary().size());
 
-			int returnedPostings = 0;
-			for(Posting p : index.getPostingsNoPositions("whale"))
+			ArrayList<DocIdScorePair> IdsAndScores = new ArrayList<>();
+			RankedQuery testQuery = new RankedQuery("whale");
+			IdsAndScores.addAll(testQuery.getTopTen(diskIndex, processor, corpus));
+			System.out.println("done!");
+
+			for(DocIdScorePair pair : IdsAndScores)
 			{
-				returnedPostings++;
-				System.out.println("Document ID " + p.getDocumentId() + ": " + corpus.getDocument(p.getDocumentId()).getTitle());
+				System.out.println("Document ID " + pair.getId() + " : " + corpus.getDocument(pair.getId()).getTitle() + " || Score : " + pair.getScore());
 			}
-			System.out.println("Number of documents found: " + returnedPostings);
         }
         catch (FileNotFoundException e) {
             // TODO Auto-generated catch block

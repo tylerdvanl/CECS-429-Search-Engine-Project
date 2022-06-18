@@ -4,6 +4,8 @@ import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,7 +20,8 @@ public class DiskIndexWriter
     public ArrayList<Integer> writeIndex(Index index, Path absolutePathSave)
     {
         ArrayList<Integer> startBytes = new ArrayList<>();
-        
+        System.out.println("Saving to disk...");
+        Instant start = Instant.now();
         try 
         {
             FileOutputStream postingsOut = new FileOutputStream("mobyDickCorpus\\index\\postings.bin");
@@ -27,7 +30,6 @@ public class DiskIndexWriter
             DataOutputStream weightsDataOut = new DataOutputStream(weightsOut);
             RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
             BTree termsToBytesTree = createBTree(recordManager);
-
             List<Double> termWeights = new ArrayList<>();
             List<String> vocabulary = index.getVocabulary();
 
@@ -45,31 +47,43 @@ public class DiskIndexWriter
                     OPTIONAL ADDITION:
                     I've added wdt to the postings in the file, fulfilling the DSP Index module.
              */
+
             for(String term : vocabulary)
             {
-                startBytes.add(postingsDataOut.size());
-                termsToBytesTree.insert(term, postingsDataOut.size(), false);
+                //System.out.println("New Term: " + Instant.now().toEpochMilli());
+                int currentStartBytes = postingsDataOut.size();
+                startBytes.add(currentStartBytes);
+                termsToBytesTree.insert(term, currentStartBytes, false);
+                //System.out.println("Tree Insert: " + Instant.now().toEpochMilli());
                 List<Posting> postings = index.getPostingsWithPositions(term);
-                postingsDataOut.writeInt(postings.size());
+                int documentFrequency = postings.size();
+                postingsDataOut.writeInt(documentFrequency);
+                //System.out.println("Document Frequency: " + Instant.now().toEpochMilli());
                 int previousID = 0;
                 for(Posting posting : postings) //surely that's not confusing//
                 {
                     int currentID = posting.getDocumentId();
                     postingsDataOut.writeInt(currentID - previousID);
+                    //System.out.println("Document: " + Instant.now().toEpochMilli());
                     List<Integer> positions = posting.getPositions();
                     //KEEP IN MIND: Doubles are 8 Bytes!  Ints are 4!
-                    Double termWeight = calculateTermWeight(positions.size());
+                    int termFrequency = positions.size();
+                    Double termWeight = calculateTermWeight(termFrequency);
                     postingsDataOut.writeDouble(termWeight);
+                    //System.out.println("wdt: " + Instant.now().toEpochMilli());
                     termWeights.add(termWeight);
-                    postingsDataOut.writeInt(positions.size());
+                    postingsDataOut.writeInt(termFrequency);
+                    //System.out.println("Term Frequency: " + Instant.now().toEpochMilli());
                     int previousPosition = 0;
                     for(int position : positions)
                     {
                         postingsDataOut.writeInt(position - previousPosition);
+                        //System.out.println("Position: " + Instant.now().toEpochMilli());
                         previousPosition = position;
                     }
                     previousID = currentID;
-                    weightsDataOut.writeDouble(calculateDocumentWeight(termWeights));
+                    //weightsDataOut.writeDouble(calculateDocumentWeight(termWeights));
+                    //System.out.println("Document Weight: " + Instant.now().toEpochMilli());
                 }
             }
             postingsDataOut.close(); 
@@ -80,7 +94,10 @@ public class DiskIndexWriter
         catch (IOException e) 
         {
             e.printStackTrace();
-        }        
+        }
+        Instant finish = Instant.now();
+		long timeElapsed = Duration.between(start, finish).toSeconds();
+		System.out.println("Saved to disk in " + timeElapsed + " seconds.");        
         return startBytes;
     }
 

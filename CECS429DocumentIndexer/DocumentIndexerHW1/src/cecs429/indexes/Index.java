@@ -25,4 +25,6 @@ public interface Index {
 	 * @throws IOException
 	 */
 	List<String> getVocabulary() throws IOException;
+
+	double getDocWeight(int docId) throws IOException;
 }

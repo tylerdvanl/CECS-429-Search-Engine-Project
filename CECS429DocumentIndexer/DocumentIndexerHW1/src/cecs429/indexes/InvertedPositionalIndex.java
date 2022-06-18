@@ -101,4 +101,9 @@ public class InvertedPositionalIndex implements Index
     {
         return getPostingsNoPositions(term).size();
     }
+
+    public double getDocWeight(int docID)
+    {
+        return 0.0;
+    }
 }

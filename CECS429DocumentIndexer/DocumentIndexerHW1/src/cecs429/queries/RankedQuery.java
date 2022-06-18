@@ -17,14 +17,14 @@ import cecs429.utilities.DocIdScorePairSortByScore;
 
 public class RankedQuery{
 
-    private List<String> mTerms = new ArrayList<>();
+    private String mQuery;
 
-    public RankedQuery(List<String> terms)
+    public RankedQuery(String query)
     {
-        mTerms.addAll(terms);
+        mQuery = query;
     }
 
-    public List<DocIdScorePair> getTopTen(DiskPositionalIndex index, List<String> terms, DocumentCorpus corpus) throws IOException {
+    public List<DocIdScorePair> getTopTen(Index index, TokenProcessor processor, DocumentCorpus corpus) throws IOException {
         //TODO: In ranked query mode, you must process a query without any Boolean operators and return the top K = 10
         //documents satisfying the query
         //For each term, get its postings.  Create an accumulator for each document found, and score the document according to 
@@ -33,6 +33,7 @@ public class RankedQuery{
         HashMap<Integer, Double> docsAndRanks = new HashMap<>();
         PriorityQueue<DocIdScorePair> resultingScoresAndPostings = new PriorityQueue<DocIdScorePair>(new DocIdScorePairSortByScore());
         ArrayList<DocIdScorePair> topTen = new ArrayList<>();
+        ArrayList<String> terms = processor.processToken(mQuery);
 
         for(String term : terms)
         {
@@ -68,7 +69,9 @@ public class RankedQuery{
             //Put the top 10 from the priority queue and put them in a list.
             for(int i = 0; i < 10; i++)
             {
-                topTen.add(resultingScoresAndPostings.poll());
+                DocIdScorePair popped = resultingScoresAndPostings.poll();
+                if(popped != null)
+                    topTen.add(popped);
             }
         }
         return topTen;
@@ -82,7 +85,7 @@ public class RankedQuery{
         return Math.log((1 + (corpus.getCorpusSize()/dft)));
     }
 
-    private double normalizeAccumulatorScore(int docId, Double accumulator, DiskPositionalIndex index) throws IOException
+    private double normalizeAccumulatorScore(int docId, Double accumulator, Index index) throws IOException
     {
         return accumulator/(index.getDocWeight(docId));
     }
