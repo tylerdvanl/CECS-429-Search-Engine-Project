@@ -127,7 +127,6 @@ public class DiskPositionalIndex implements Index{
             }
             
             tree = BTree.load(recordManager, bTreeId);
-            System.out.println("Debug: Loaded tree with nodes: " + tree.size());
             int startBytes = (int) tree.find(term); // casting, blegh
             termInfoFile.seek(startBytes);
             //read the next int: dft, save it.
@@ -180,7 +179,6 @@ public class DiskPositionalIndex implements Index{
         {
             Tuple browsedTuple = new Tuple();
             tree = BTree.load(recordManager, bTreeId);
-            System.out.println("Debug: Loaded tree with nodes: " + tree.size());
             TupleBrowser browser = tree.browse();
             while(browser.getNext(browsedTuple))
             {
@@ -209,7 +207,6 @@ public class DiskPositionalIndex implements Index{
             }
             
             tree = BTree.load(recordManager, bTreeId);
-            System.out.println("Debug: Loaded tree with nodes: " + tree.size());
             int startBytes = (int) tree.find(term); // casting, blegh
             termInfoFile.seek(startBytes);
             //read the next int: dft, save it.

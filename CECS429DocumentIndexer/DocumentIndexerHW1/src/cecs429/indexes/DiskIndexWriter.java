@@ -3,10 +3,12 @@ package cecs429.indexes;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.IDN;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import jdbm.RecordManager;
@@ -30,8 +32,8 @@ public class DiskIndexWriter
             DataOutputStream weightsDataOut = new DataOutputStream(weightsOut);
             RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
             BTree termsToBytesTree = createBTree(recordManager);
-            List<Double> termWeights = new ArrayList<>();
             List<String> vocabulary = index.getVocabulary();
+            HashMap<Integer, ArrayList<Double>> IdToWeights = new HashMap<>();
 
             /*
              *  For each term in the vocabulary:
@@ -63,15 +65,20 @@ public class DiskIndexWriter
                 for(Posting posting : postings) //surely that's not confusing//
                 {
                     int currentID = posting.getDocumentId();
+                    //If we havent seen this document yet, add an empty list to the ID-Weight map
+                    if(!IdToWeights.containsKey(currentID))
+                        IdToWeights.put(currentID, new ArrayList<Double>());
+
                     postingsDataOut.writeInt(currentID - previousID);
                     //System.out.println("Document: " + Instant.now().toEpochMilli());
                     List<Integer> positions = posting.getPositions();
                     //KEEP IN MIND: Doubles are 8 Bytes!  Ints are 4!
                     int termFrequency = positions.size();
                     Double termWeight = calculateTermWeight(termFrequency);
+                    //Add the weight to the ID-Weight map for this document
+                    IdToWeights.get(currentID).add(termWeight);
                     postingsDataOut.writeDouble(termWeight);
                     //System.out.println("wdt: " + Instant.now().toEpochMilli());
-                    termWeights.add(termWeight);
                     postingsDataOut.writeInt(termFrequency);
                     //System.out.println("Term Frequency: " + Instant.now().toEpochMilli());
                     int previousPosition = 0;
@@ -82,8 +89,24 @@ public class DiskIndexWriter
                         previousPosition = position;
                     }
                     previousID = currentID;
-                    //weightsDataOut.writeDouble(calculateDocumentWeight(termWeights));
+                    
                     //System.out.println("Document Weight: " + Instant.now().toEpochMilli());
+                }
+            }
+
+            //Calculate document weights and write them out
+            for(int i = 0; i < IdToWeights.size(); i++)
+            {
+                ArrayList<Double> termWeights = new ArrayList<>();
+                ArrayList<Double> weights = IdToWeights.get(i);
+                if(weights != null)
+                {
+                    termWeights.addAll(IdToWeights.get(i));
+                    weightsDataOut.writeDouble(calculateDocumentWeight(termWeights));
+                }
+                else
+                {
+                    weightsDataOut.writeDouble(0.0);
                 }
             }
             postingsDataOut.close(); 

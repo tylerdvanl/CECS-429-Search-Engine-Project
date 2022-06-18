@@ -1,5 +1,6 @@
 package edu.csulb;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,6 +10,8 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.swing.JFileChooser;
@@ -21,9 +24,12 @@ import cecs429.indexes.DiskPositionalIndex;
 import cecs429.indexes.Index;
 import cecs429.indexes.InvertedPositionalIndex;
 import cecs429.indexes.Posting;
+import cecs429.queries.BooleanQueryParser;
+import cecs429.queries.QueryComponent;
 import cecs429.queries.RankedQuery;
 import cecs429.text.EnglishTokenProcessor;
 import cecs429.text.EnglishTokenStream;
+import cecs429.text.TokenProcessor;
 import cecs429.utilities.DocIdScorePair;
 
 public class FileWritingRunner 
@@ -96,6 +102,20 @@ public class FileWritingRunner
 		System.out.println("Indexed in " + timeElapsed + " seconds.");
 		return positionalIndex;
 	}
+
+	private static String getUserInput(Scanner inputScanner)
+	{
+		System.out.print("> ");
+		String userInput = inputScanner.nextLine();
+		return userInput;
+	}
+
+	private static QueryComponent createQuery(String queryString)
+	{
+		BooleanQueryParser queryParser = new BooleanQueryParser();
+		QueryComponent query = queryParser.parseQuery(queryString);
+		return query;
+	}
     
     private static Path getPathFromUser() throws FileNotFoundException
 	{
@@ -115,4 +135,59 @@ public class FileWritingRunner
 			throw new FileNotFoundException();	
 	}
 
+	//Stem special query
+	private static void menuStemToken(String token, TokenProcessor processor)
+	{
+		//Grab the string that results after the first space.
+		List<String> tokens = Arrays.asList(token.split("\\s", 2));
+		token = tokens.get(1);
+		token = processor.stemSingleString(token);
+		System.out.println("Stemmed: " + token);
+	}
+	
+	//Index special query
+	private static DocumentCorpus createNewCorpusFromInput(String directoryInput)
+	{
+		List<String> inputs = Arrays.asList(directoryInput.split("\\s", 2));
+		String directory = inputs.get(1);
+		Path path = Paths.get(directory);
+		return DirectoryCorpus.loadDirectory(path);
+
+	}
+
+	private static void printFirstThousandVocabAndTotal(Index index) throws IOException
+	{
+		ArrayList<String> vocab = new ArrayList<String>(index.getVocabulary());
+		for(int count = 0; count < 1000 && count < vocab.size(); count++)
+		{
+			System.out.println(vocab.get(count));
+		}
+		System.out.println("Total vocabulary size: " + vocab.size());
+	}
+
+	private static void selectAndPrintDocument(Scanner inputScanner, DocumentCorpus corpus) throws IOException
+	{
+		System.out.println("Would you like to view one of these documents? \n" + 
+		"Enter its ID to view, or type \"n\" to do another query.");
+		String selection = getUserInput(inputScanner);
+		//If the input starts with a digit, parse an int and print the doc.
+		if(selection.substring(0, 1).matches("[\\d]"))
+		{
+			int numSelection = Integer.parseInt(selection);
+			if(numSelection > 0)
+			{
+				Document selectedDoc = corpus.getDocument(numSelection);
+				BufferedReader reader = new BufferedReader(selectedDoc.getContent());
+				boolean finished = false;
+				while(!finished)
+				{
+					String line = reader.readLine();
+					if(line != null)
+						System.out.println(line);
+					else if(line == null)
+						finished = true;
+				}
+			}
+		}
+	}
 }
