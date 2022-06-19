@@ -35,6 +35,7 @@ public class RankedQuery{
         ArrayList<DocIdScorePair> topTen = new ArrayList<>();
         ArrayList<String> preProcessed = splitQueryOnWhitespace(mQuery);
         ArrayList<String> terms = new ArrayList<>();
+        
         for(String processing : preProcessed)
         {
             terms.addAll(processor.processToken(processing));
@@ -43,7 +44,7 @@ public class RankedQuery{
         for(String term : terms)
         {
             ArrayList<Posting> potentiallyRelevant = new ArrayList<Posting>();
-            potentiallyRelevant.addAll(index.getPostingsWithPositions(term));
+            potentiallyRelevant.addAll(index.getPostingsNoPositions(term));
             for(Posting posting : potentiallyRelevant)
             {
                 double acc = 0.0;
@@ -63,16 +64,15 @@ public class RankedQuery{
                     docsAndRanks.put(posting.getDocumentId(), acc);
                 }
             }
-
-            //Now, normalize all the values and add them to the priority queue.
-            for(int docId : docsAndRanks.keySet())
-            {
-                docsAndRanks.put(docId, normalizeAccumulatorScore(docId, docsAndRanks.get(docId), index));
-                resultingScoresAndPostings.add(new DocIdScorePair(docId, docsAndRanks.get(docId)));
-            }
-
         }
-        
+
+        //Now, normalize all the values and add them to the priority queue.
+        for(int docId : docsAndRanks.keySet())
+        {
+            docsAndRanks.put(docId, normalizeAccumulatorScore(docId, docsAndRanks.get(docId), index));
+            resultingScoresAndPostings.add(new DocIdScorePair(docId, docsAndRanks.get(docId)));
+        }
+
         //Put the top 10 from the priority queue and put them in a list.
         for(int i = 0; i < 10; i++)
         {
