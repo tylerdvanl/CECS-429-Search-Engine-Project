@@ -42,7 +42,6 @@ public class FileWritingRunner
 			Scanner in = new Scanner(System.in);
             Path directory;
             Path savePath = Paths.get("index\\");
-
 			Index diskIndex = new DiskPositionalIndex();
 			EnglishTokenProcessor processor = new EnglishTokenProcessor();
 			directory = getPathFromUser();
@@ -54,8 +53,6 @@ public class FileWritingRunner
 				System.out.println("1.) Index a corpus");
 				System.out.println("2.) Perform queries");
 				String modeChoice = getUserInput(in);
-				
-	
 				//Index a corpus and write it out to file.
 				if(modeChoice.matches("1"))
 				{
@@ -68,23 +65,77 @@ public class FileWritingRunner
 				}
 				else if(modeChoice.matches("2"))
 				{
-					//Ask to do ranked query or boolean query.  Both modes should allow the special queries to work.
-					int corpusSize = corpus.getCorpusSize();	
-					ArrayList<DocIdScorePair> IdsAndScores = new ArrayList<>();
-					RankedQuery testQuery = new RankedQuery("devils postpile");
-					IdsAndScores.addAll(testQuery.getTopTen(diskIndex, processor, corpusSize));
-					System.out.println("done!");
-		
-					for(DocIdScorePair pair : IdsAndScores)
+					while(!exit)
 					{
-						System.out.println("Document ID " + pair.getId() + " : " + corpus.getDocument(pair.getId()).getTitle() + " || Score : " + pair.getScore());
+						//Ask to do ranked query or boolean query.  Both modes should allow the special queries to work.
+						System.out.println("1.) Ranked Query");
+						System.out.println("2.) Boolean Query");
+						String queryChoice = getUserInput(in);
+
+						if(queryChoice.matches("1"))
+						{
+							//Do Ranked Queries
+							int corpusSize = corpus.getCorpusSize();	
+							ArrayList<DocIdScorePair> IdsAndScores = new ArrayList<>();
+							RankedQuery testQuery = new RankedQuery("devils postpile");
+							IdsAndScores.addAll(testQuery.getTopTen(diskIndex, processor, corpusSize));
+							System.out.println("done!");
+				
+							for(DocIdScorePair pair : IdsAndScores)
+							{
+								System.out.println("Document ID " + pair.getId() + " : " + corpus.getDocument(pair.getId()).getTitle() + " || Score : " + pair.getScore());
+							}
+							exit = true;
+						}
+						else if(queryChoice.matches("2"))
+						{
+							//Do boolean queries, same as previous milestone
+							int corpusSize = corpus.getCorpusSize();
+							System.out.println("Enter a query: ");
+							String input = getUserInput(in);
+							//Special user inputs:
+							// :q quits the program.
+							if(input.matches(":q"))
+							{
+								exit = true;
+							}
+							else if(input.startsWith(":stem"))
+							{
+								menuStemToken(input, processor);
+							}
+							else if(input.startsWith(":index"))
+							{
+								//corpus = createNewCorpusFromInput(input);
+								//diskIndex = indexCorpus(corpus);
+							}
+							else if(input.matches(":vocab"))
+							{
+								printFirstThousandVocabAndTotal(diskIndex);
+							}
+							else
+							{
+								QueryComponent query = createQuery(input);
+								/*for (Posting p : index.getPostings(query)) {
+									System.out.println("Document " + corpus.getDocument(p.getDocumentId()).getTitle() + " at positions: " + p.getPositions());
+								}*/
+								int returnedPostings = 0;
+								for(Posting p : query.getPostings(diskIndex, processor))
+								{
+									returnedPostings++;
+									System.out.println("Document ID " + p.getDocumentId() + ": " + corpus.getDocument(p.getDocumentId()).getTitle());
+								}
+								System.out.println("Number of documents found: " + returnedPostings);
+								//Select and print document?
+								if(returnedPostings > 0)
+									selectAndPrintDocument(in, corpus);
+							}
+						}
 					}
-					exit = true;
 				}
 			}
+			System.out.println("Exiting.");
         }
         catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 		catch (IOException e){
