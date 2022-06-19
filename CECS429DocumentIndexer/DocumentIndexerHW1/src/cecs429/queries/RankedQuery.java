@@ -33,7 +33,12 @@ public class RankedQuery{
         HashMap<Integer, Double> docsAndRanks = new HashMap<>();
         PriorityQueue<DocIdScorePair> resultingScoresAndPostings = new PriorityQueue<DocIdScorePair>(new DocIdScorePairSortByScore());
         ArrayList<DocIdScorePair> topTen = new ArrayList<>();
-        ArrayList<String> terms = processor.processToken(mQuery);
+        ArrayList<String> preProcessed = splitQueryOnWhitespace(mQuery);
+        ArrayList<String> terms = new ArrayList<>();
+        for(String processing : preProcessed)
+        {
+            terms.addAll(processor.processToken(processing));
+        }
 
         for(String term : terms)
         {
@@ -66,15 +71,22 @@ public class RankedQuery{
                 resultingScoresAndPostings.add(new DocIdScorePair(docId, docsAndRanks.get(docId)));
             }
 
-            //Put the top 10 from the priority queue and put them in a list.
-            for(int i = 0; i < 10; i++)
-            {
-                DocIdScorePair popped = resultingScoresAndPostings.poll();
-                if(popped != null)
-                    topTen.add(popped);
-            }
+        }
+        
+        //Put the top 10 from the priority queue and put them in a list.
+        for(int i = 0; i < 10; i++)
+        {
+            DocIdScorePair popped = resultingScoresAndPostings.poll();
+            if(popped != null)
+                topTen.add(popped);
         }
         return topTen;
+    }
+
+    private ArrayList<String> splitQueryOnWhitespace(String query)
+    {
+        RankedQueryParser parser = new RankedQueryParser();
+        return parser.getTerms(query);
     }
 
     private double calculateQueryWeight(String term, Index index, int corpusSize) throws IOException

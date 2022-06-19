@@ -69,11 +69,9 @@ public class FileWritingRunner
 				else if(modeChoice.matches("2"))
 				{
 					//Ask to do ranked query or boolean query.  Both modes should allow the special queries to work.
-					int corpusSize = corpus.getCorpusSize();
-					System.out.println(diskIndex.getVocabulary().size());
-	
+					int corpusSize = corpus.getCorpusSize();	
 					ArrayList<DocIdScorePair> IdsAndScores = new ArrayList<>();
-					RankedQuery testQuery = new RankedQuery("strenuous");
+					RankedQuery testQuery = new RankedQuery("devils postpile");
 					IdsAndScores.addAll(testQuery.getTopTen(diskIndex, processor, corpusSize));
 					System.out.println("done!");
 		
