@@ -40,11 +40,10 @@ public class FileWritingRunner
         try 
         {
 			Scanner in = new Scanner(System.in);
-            Path directory;
             Path savePath = Paths.get("index\\");
 			Index diskIndex = new DiskPositionalIndex();
 			EnglishTokenProcessor processor = new EnglishTokenProcessor();
-			directory = getPathFromUser();
+			Path directory = getPathFromUser();
 			DocumentCorpus corpus = DirectoryCorpus.loadDirectory(directory);
 			boolean exit = false;
 			
@@ -77,15 +76,41 @@ public class FileWritingRunner
 							//Do Ranked Queries
 							int corpusSize = corpus.getCorpusSize();	
 							ArrayList<DocIdScorePair> IdsAndScores = new ArrayList<>();
-							RankedQuery testQuery = new RankedQuery("devils postpile");
-							IdsAndScores.addAll(testQuery.getTopTen(diskIndex, processor, corpusSize));
-							System.out.println("done!");
-				
-							for(DocIdScorePair pair : IdsAndScores)
+							System.out.println("Enter a query: ");
+							String input = getUserInput(in);
+
+							if(input.matches(":q"))
 							{
-								System.out.println("Document ID " + pair.getId() + " : " + corpus.getDocument(pair.getId()).getTitle() + " || Score : " + pair.getScore());
+								exit = true;
 							}
-							exit = true;
+							else if(input.startsWith(":stem"))
+							{
+								menuStemToken(input, processor);
+							}
+							/* This functionality is already covered by the first question in the menu.
+							else if(input.startsWith(":index"))
+							{
+								//corpus = createNewCorpusFromInput(input);
+								//diskIndex = indexCorpus(corpus);
+							} */
+							else if(input.matches(":vocab"))
+							{
+								printFirstThousandVocabAndTotal(diskIndex);
+							}
+							else
+							{
+								RankedQuery testQuery = new RankedQuery(input);
+								IdsAndScores.addAll(testQuery.getTopTen(diskIndex, processor, corpusSize));
+					
+								for(DocIdScorePair pair : IdsAndScores)
+								{
+									int i = 0;
+									System.out.println("Result #" + i + ": Document ID " + pair.getId() + " : " + 
+										corpus.getDocument(pair.getId()).getTitle() + " || Score : " + pair.getScore());
+								}
+								if(IdsAndScores.size() > 0)
+									selectAndPrintDocument(in, corpus);
+							}
 						}
 						else if(queryChoice.matches("2"))
 						{
@@ -103,11 +128,12 @@ public class FileWritingRunner
 							{
 								menuStemToken(input, processor);
 							}
+							/* This functionality is already covered by the first question in the menu.
 							else if(input.startsWith(":index"))
 							{
 								//corpus = createNewCorpusFromInput(input);
 								//diskIndex = indexCorpus(corpus);
-							}
+							} */
 							else if(input.matches(":vocab"))
 							{
 								printFirstThousandVocabAndTotal(diskIndex);
