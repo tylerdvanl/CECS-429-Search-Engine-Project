@@ -101,12 +101,13 @@ public class FileWritingRunner
 							{
 								RankedQuery testQuery = new RankedQuery(input);
 								IdsAndScores.addAll(testQuery.getTopTen(diskIndex, processor, corpusSize));
-					
+								int i = 1;
 								for(DocIdScorePair pair : IdsAndScores)
 								{
-									int i = 0;
+
 									System.out.println("Result #" + i + ": Document ID " + pair.getId() + " : " + 
 										corpus.getDocument(pair.getId()).getTitle() + " || Score : " + pair.getScore());
+									i++;
 								}
 								if(IdsAndScores.size() > 0)
 									selectAndPrintDocument(in, corpus);
