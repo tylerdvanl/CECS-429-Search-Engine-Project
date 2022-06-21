@@ -41,8 +41,8 @@ public class RankedQuery{
         for(String term : terms)
         {
             ArrayList<Posting> potentiallyRelevant = new ArrayList<Posting>();
-            potentiallyRelevant.addAll(index.getPostingsNoPositions(term));
-            for(Posting posting : potentiallyRelevant)
+            //potentiallyRelevant.addAll();
+            for(Posting posting : index.getPostingsNoPositions(term))
             {
                 double acc = 0.0;
                 double wdt = posting.getWeight();

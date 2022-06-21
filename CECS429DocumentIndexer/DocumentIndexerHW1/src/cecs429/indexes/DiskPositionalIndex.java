@@ -15,6 +15,26 @@ import jdbm.helper.TupleBrowser;
 
 public class DiskPositionalIndex implements Index{
 
+    RecordManager recordManager;
+    BTree tree;
+    long bTreeId;
+
+    public DiskPositionalIndex() throws IOException
+    {
+        recordManager = RecordManagerFactory.createRecordManager("Terms");
+        bTreeId = recordManager.getNamedObject("TermsAndPositions");
+
+        
+        if(bTreeId == 0)
+        {
+            System.out.println("Could not load tree");
+            throw new IOException();
+        }
+
+        tree = BTree.load(recordManager, bTreeId);
+
+    }
+
     @Override
     public List<Posting> getPostingsWithPositions(String term) {
         /*  Here, we use the BTree to figure out where in our binary file the information for the term lives.
@@ -160,25 +180,13 @@ public class DiskPositionalIndex implements Index{
     @Override
     public List<String> getVocabulary() throws IOException {
         
-        RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
-        long bTreeId = recordManager.getNamedObject("TermsAndPositions");
-        BTree tree;
-        ArrayList<String> terms = new ArrayList<>();
-
-        if(bTreeId == 0)
-        {
-            System.out.println("Could not find vocabulary from index");
-        }
-        else
-        {
+            ArrayList<String> terms = new ArrayList<>();
             Tuple browsedTuple = new Tuple();
-            tree = BTree.load(recordManager, bTreeId);
             TupleBrowser browser = tree.browse();
             while(browser.getNext(browsedTuple))
             {
                 terms.add((String) browsedTuple.getKey()); //I hate casting, but I think I have to do it here.
             }
-        }
         return terms;
     }
 
@@ -188,19 +196,7 @@ public class DiskPositionalIndex implements Index{
         try
         {
             RandomAccessFile termInfoFile = new RandomAccessFile("index\\postings.bin", "r");
-            RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
-            long bTreeId = recordManager.getNamedObject("TermsAndPositions");
-            BTree tree;
-    
-            //If the btree could not load, just return an empty arraylist.
-            if(bTreeId == 0)
-            {
-                System.out.println("Could not load tree");
-                termInfoFile.close();
-                return 0;
-            }
             
-            tree = BTree.load(recordManager, bTreeId);
             int startBytes = (int) tree.find(term); // casting, blegh
             termInfoFile.seek(startBytes);
             //read the next int: dft, save it.

@@ -53,7 +53,7 @@ public class FileWritingRunner
 				System.out.println("2.) Perform queries");
 				String modeChoice = getUserInput(in);
 				//Index a corpus and write it out to file.
-				if(modeChoice.matches("1"))
+				if(modeChoice.equals("1"))
 				{
 					DiskIndexWriter indexWriter = new DiskIndexWriter();
 	
@@ -63,7 +63,7 @@ public class FileWritingRunner
 					ArrayList<Integer> bytePositions = indexWriter.writeIndex(index, savePath, size);
 					System.out.println("Finished Indexing");
 				}
-				else if(modeChoice.matches("2"))
+				else if(modeChoice.equals("2"))
 				{
 					while(!exit)
 					{
@@ -72,7 +72,7 @@ public class FileWritingRunner
 						System.out.println("2.) Boolean Query");
 						String queryChoice = getUserInput(in);
 
-						if(queryChoice.matches("1"))
+						if(queryChoice.equals("1"))
 						{
 							//Do Ranked Queries
 							int corpusSize = corpus.getCorpusSize();	
@@ -80,7 +80,7 @@ public class FileWritingRunner
 							System.out.println("Enter a query: ");
 							String input = getUserInput(in);
 
-							if(input.matches(":q"))
+							if(input.equals(":q"))
 							{
 								exit = true;
 							}
@@ -94,7 +94,7 @@ public class FileWritingRunner
 								//corpus = createNewCorpusFromInput(input);
 								//diskIndex = indexCorpus(corpus);
 							} */
-							else if(input.matches(":vocab"))
+							else if(input.equals(":vocab"))
 							{
 								printFirstThousandVocabAndTotal(diskIndex);
 							}
@@ -114,7 +114,7 @@ public class FileWritingRunner
 									selectAndPrintDocument(in, corpus);
 							}
 						}
-						else if(queryChoice.matches("2"))
+						else if(queryChoice.equals("2"))
 						{
 							//Do boolean queries, same as previous milestone
 							int corpusSize = corpus.getCorpusSize();
@@ -122,7 +122,7 @@ public class FileWritingRunner
 							String input = getUserInput(in);
 							//Special user inputs:
 							// :q quits the program.
-							if(input.matches(":q"))
+							if(input.equals(":q"))
 							{
 								exit = true;
 							}
@@ -136,7 +136,7 @@ public class FileWritingRunner
 								//corpus = createNewCorpusFromInput(input);
 								//diskIndex = indexCorpus(corpus);
 							} */
-							else if(input.matches(":vocab"))
+							else if(input.equals(":vocab"))
 							{
 								printFirstThousandVocabAndTotal(diskIndex);
 							}
