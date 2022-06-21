@@ -17,7 +17,7 @@ public class DiskPositionalIndex implements Index{
 
     @Override
     public List<Posting> getPostingsWithPositions(String term) {
-        /*  TODO: Here, we use the BTree to figure out where in our binary file the information for the term lives.
+        /*  Here, we use the BTree to figure out where in our binary file the information for the term lives.
         *   Next, we store dft, the amount of documents the term appears in.
         *   THEN:
         *       Grab a docID, then tftd, the amount of times the term appears in that document
@@ -61,7 +61,6 @@ public class DiskPositionalIndex implements Index{
                     double weightDT = termInfoFile.readDouble();
                     int termFrequency = termInfoFile.readInt();  
                     
-                    //TODO: this is also wrong, positions come immediately after the docID.
                     //Once out of that loop, we have out docIDs, and now we need tftd for each document, and grab that many positions. 
                     ArrayList<Integer> termPositions = new ArrayList<>();
                     int currentPosition = 0;
@@ -84,12 +83,10 @@ public class DiskPositionalIndex implements Index{
         }
         catch (FileNotFoundException e) 
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } 
         catch (IOException e) 
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return postings;
@@ -98,7 +95,7 @@ public class DiskPositionalIndex implements Index{
     @Override
     public List<Posting> getPostingsNoPositions(String term) 
     {
-        /*  TODO: Here, we use the BTree to figure out where in our binary file the information for the term lives.
+        /*  Here, we use the BTree to figure out where in our binary file the information for the term lives.
         *   Next, we store dft, the amount of documents the term appears in.
         *   THEN:
         *       Grab a docID, then tftd, the amount of times the term appears in that document
@@ -151,12 +148,10 @@ public class DiskPositionalIndex implements Index{
         }
         catch (FileNotFoundException e) 
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } 
         catch (IOException e) 
         {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return null;
@@ -237,6 +232,7 @@ public class DiskPositionalIndex implements Index{
     {
         RandomAccessFile weightInfoFile = new RandomAccessFile("index\\docWeights.bin", "r");
         long length = weightInfoFile.length();
+        weightInfoFile.close();
         return length/8;
     }
 }

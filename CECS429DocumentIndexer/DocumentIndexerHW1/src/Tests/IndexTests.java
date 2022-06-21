@@ -39,7 +39,6 @@ public class IndexTests
         try {
             assertEquals(controlVocab, testIndex.getVocabulary());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -55,7 +54,6 @@ public class IndexTests
         try {
             assertEquals(controlSize, testIndex.getVocabulary().size());
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }

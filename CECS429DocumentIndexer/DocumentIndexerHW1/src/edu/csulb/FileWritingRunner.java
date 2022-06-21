@@ -59,7 +59,8 @@ public class FileWritingRunner
 	
 					// Index the documents of the corpus.
 					Index index = indexCorpus(corpus);
-					ArrayList<Integer> bytePositions = indexWriter.writeIndex(index, savePath);
+					int size = corpus.getCorpusSize();
+					ArrayList<Integer> bytePositions = indexWriter.writeIndex(index, savePath, size);
 					System.out.println("Finished Indexing");
 				}
 				else if(modeChoice.matches("2"))
@@ -247,7 +248,6 @@ public class FileWritingRunner
 		String directory = inputs.get(1);
 		Path path = Paths.get(directory);
 		return DirectoryCorpus.loadDirectory(path);
-
 	}
 
 	private static void printFirstThousandVocabAndTotal(Index index) throws IOException

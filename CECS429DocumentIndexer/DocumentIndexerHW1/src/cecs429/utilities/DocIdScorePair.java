@@ -1,7 +1,5 @@
 package cecs429.utilities;
 
-import java.util.Comparator;
-
 public class DocIdScorePair {
 
     int mDocId;

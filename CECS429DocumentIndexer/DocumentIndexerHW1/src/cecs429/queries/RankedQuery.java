@@ -2,13 +2,10 @@ package cecs429.queries;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 
-import cecs429.documents.DocumentCorpus;
-import cecs429.indexes.DiskPositionalIndex;
 import cecs429.indexes.Index;
 import cecs429.indexes.Posting;
 import cecs429.text.TokenProcessor;
@@ -25,7 +22,7 @@ public class RankedQuery{
     }
 
     public List<DocIdScorePair> getTopTen(Index index, TokenProcessor processor, int corpusSize) throws IOException {
-        //TODO: In ranked query mode, you must process a query without any Boolean operators and return the top K = 10
+        //In ranked query mode, you must process a query without any Boolean operators and return the top K = 10
         //documents satisfying the query
         //For each term, get its postings.  Create an accumulator for each document found, and score the document according to 
         //the provided formulas.  Add that score to the document's accumulator score.  At the end, add the documents to a

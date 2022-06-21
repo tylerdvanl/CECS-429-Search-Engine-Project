@@ -3,7 +3,6 @@ package cecs429.indexes;
 import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.IDN;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
@@ -19,7 +18,7 @@ import jdbm.helper.StringComparator;
 public class DiskIndexWriter 
 {
 
-    public ArrayList<Integer> writeIndex(Index index, Path absolutePathSave)
+    public ArrayList<Integer> writeIndex(Index index, Path absolutePathSave, int corpusSize)
     {
         ArrayList<Integer> startBytes = new ArrayList<>();
         System.out.println("Saving to disk...");
@@ -52,15 +51,12 @@ public class DiskIndexWriter
 
             for(String term : vocabulary)
             {
-                //System.out.println("New Term: " + Instant.now().toEpochMilli());
                 int currentStartBytes = postingsDataOut.size();
                 startBytes.add(currentStartBytes);
                 termsToBytesTree.insert(term, currentStartBytes, false);
-                //System.out.println("Tree Insert: " + Instant.now().toEpochMilli());
                 List<Posting> postings = index.getPostingsWithPositions(term);
                 int documentFrequency = postings.size();
                 postingsDataOut.writeInt(documentFrequency);
-                //System.out.println("Document Frequency: " + Instant.now().toEpochMilli());
                 int previousID = 0;
                 for(Posting posting : postings) //surely that's not confusing//
                 {
@@ -70,7 +66,6 @@ public class DiskIndexWriter
                         IdToWeights.put(currentID, new ArrayList<Double>());
 
                     postingsDataOut.writeInt(currentID - previousID);
-                    //System.out.println("Document: " + Instant.now().toEpochMilli());
                     List<Integer> positions = posting.getPositions();
                     //KEEP IN MIND: Doubles are 8 Bytes!  Ints are 4!
                     int termFrequency = positions.size();
@@ -78,24 +73,19 @@ public class DiskIndexWriter
                     //Add the weight to the ID-Weight map for this document
                     IdToWeights.get(currentID).add(termWeight);
                     postingsDataOut.writeDouble(termWeight);
-                    //System.out.println("wdt: " + Instant.now().toEpochMilli());
                     postingsDataOut.writeInt(termFrequency);
-                    //System.out.println("Term Frequency: " + Instant.now().toEpochMilli());
                     int previousPosition = 0;
                     for(int position : positions)
                     {
                         postingsDataOut.writeInt(position - previousPosition);
-                        //System.out.println("Position: " + Instant.now().toEpochMilli());
                         previousPosition = position;
                     }
                     previousID = currentID;
-                    
-                    //System.out.println("Document Weight: " + Instant.now().toEpochMilli());
                 }
             }
-
+            System.out.println(IdToWeights.size());
             //Calculate document weights and write them out
-            for(int i = 0; i < IdToWeights.size(); i++)
+            for(int i = 0; i < corpusSize; i++)
             {
                 ArrayList<Double> termWeights = new ArrayList<>();
                 ArrayList<Double> weights = IdToWeights.get(i);
@@ -124,7 +114,6 @@ public class DiskIndexWriter
         return startBytes;
     }
 
-    //TODO: See if this thing actually works.
     private BTree createBTree(RecordManager recordManager) throws IOException
     {
         BTree tree = BTree.createInstance(recordManager, new StringComparator());
