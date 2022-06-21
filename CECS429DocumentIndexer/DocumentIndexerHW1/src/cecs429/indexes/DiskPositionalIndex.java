@@ -236,6 +236,7 @@ public class DiskPositionalIndex implements Index{
     public long indexSize() throws IOException 
     {
         RandomAccessFile weightInfoFile = new RandomAccessFile("index\\docWeights.bin", "r");
-        return weightInfoFile.length()/8;
+        long length = weightInfoFile.length();
+        return length/8;
     }
 }

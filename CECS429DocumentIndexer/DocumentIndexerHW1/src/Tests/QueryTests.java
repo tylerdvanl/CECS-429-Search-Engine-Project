@@ -254,7 +254,6 @@ public class QueryTests
     }
 
     //PhraseQueries
-    //TODO:
     @Test
     public void testPhraseSingleTerm()
     {
@@ -272,7 +271,6 @@ public class QueryTests
 
         assertEquals(controlPostings.get(0).getDocumentId(), resultPostings.get(0).getDocumentId());  
     }
-    //TODO:
     @Test
     public void testPhraseSingleTermStemmed()
     {
@@ -291,7 +289,6 @@ public class QueryTests
         assertEquals(controlPostings.size(), resultPostings.size());
         assertEquals(controlPostings.get(0).getDocumentId(), resultPostings.get(0).getDocumentId());  
     }
-    //TODO:
     @Test
     public void testPhraseTwoTerms()
     {
@@ -310,7 +307,6 @@ public class QueryTests
         assertEquals(controlPostings.size(), resultPostings.size());
         assertEquals(controlPostings.get(0).getDocumentId(), resultPostings.get(0).getDocumentId());  
     }
-    //TODO:
     @Test
     public void testPhraseTwoTermsStemmed()
     {
@@ -330,7 +326,6 @@ public class QueryTests
         assertEquals(controlPostings.size(), resultPostings.size());
         assertEquals(controlPostings.get(0).getDocumentId(), resultPostings.get(0).getDocumentId());  
     }
-    //TODO:
     @Test
     public void testPhraseManyTerms()
     {
@@ -349,7 +344,6 @@ public class QueryTests
         assertEquals(controlPostings.size(), resultPostings.size());
         assertEquals(controlPostings.get(0).getDocumentId(), resultPostings.get(0).getDocumentId());  
     }
-    //TODO:
     @Test
     public void testPhraseManyTermsStemmed()
     {
@@ -368,8 +362,6 @@ public class QueryTests
         assertEquals(controlPostings.size(), resultPostings.size());
         assertEquals(controlPostings.get(0).getDocumentId(), resultPostings.get(0).getDocumentId());  
     }
-
-    //TODO: 
     @Test
     public void testHyphenQuery()
     {
@@ -394,28 +386,27 @@ public class QueryTests
         assertEquals(controlPostings.get(0).getDocumentId(), resultPostings.get(0).getDocumentId());  
     }
 
-        //TODO: 
-        @Test
-        public void testHyphenQueryStemmed()
-        {
-            DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
-            Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
-            ArrayList<QueryComponent> testComponents = new ArrayList<>();
-            EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
-            testComponents.add(new TermLiteral("testing-helping"));
-            AndQuery testQuery = new AndQuery(testComponents);
-            ArrayList<Posting> resultPostings = new ArrayList<>(testQuery.getPostings(testIndex, testProcessor));
+    @Test
+    public void testHyphenQueryStemmed()
+    {
+        DocumentCorpus testCorpus = DirectoryCorpus.loadDirectory(Paths.get(testPath));
+        Index testIndex = InvertedIndexRunner.indexCorpus(testCorpus);
+        ArrayList<QueryComponent> testComponents = new ArrayList<>();
+        EnglishTokenProcessor testProcessor = new EnglishTokenProcessor();
+        testComponents.add(new TermLiteral("testing-helping"));
+        AndQuery testQuery = new AndQuery(testComponents);
+        ArrayList<Posting> resultPostings = new ArrayList<>(testQuery.getPostings(testIndex, testProcessor));
     
-            ArrayList<Posting> controlPostings = new ArrayList<>();
-            ArrayList<Integer> controlPositions = new ArrayList<>();
-            controlPostings.add(new Posting(0, controlPositions));
-            controlPostings.add(new Posting(1, controlPositions));
-            controlPostings.add(new Posting(2, controlPositions));
-            controlPostings.add(new Posting(3, controlPositions));
-            controlPostings.add(new Posting(4, controlPositions));
+        ArrayList<Posting> controlPostings = new ArrayList<>();
+        ArrayList<Integer> controlPositions = new ArrayList<>();
+        controlPostings.add(new Posting(0, controlPositions));
+        controlPostings.add(new Posting(1, controlPositions));
+        controlPostings.add(new Posting(2, controlPositions));
+        controlPostings.add(new Posting(3, controlPositions));
+        controlPostings.add(new Posting(4, controlPositions));
     
     
-            assertEquals(controlPostings.size(), resultPostings.size());
-            assertEquals(controlPostings.get(0).getDocumentId(), resultPostings.get(0).getDocumentId());  
-        }
+        assertEquals(controlPostings.size(), resultPostings.size());
+        assertEquals(controlPostings.get(0).getDocumentId(), resultPostings.get(0).getDocumentId());  
+    }
 }
