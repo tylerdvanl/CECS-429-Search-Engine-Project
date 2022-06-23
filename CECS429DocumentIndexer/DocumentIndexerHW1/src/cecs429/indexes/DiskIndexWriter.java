@@ -1,6 +1,7 @@
 package cecs429.indexes;
 
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -25,9 +26,9 @@ public class DiskIndexWriter
         Instant start = Instant.now();
         try 
         {
-            FileOutputStream postingsOut = new FileOutputStream("index\\postings.bin");
+            FileOutputStream postingsOut = new FileOutputStream(new File(absolutePathSave.toString(), "postings.bin"));
             DataOutputStream postingsDataOut = new DataOutputStream(postingsOut);
-            FileOutputStream weightsOut = new FileOutputStream("index\\docWeights.bin");
+            FileOutputStream weightsOut = new FileOutputStream(new File(absolutePathSave.toString(), "postings.bin"));
             DataOutputStream weightsDataOut = new DataOutputStream(weightsOut);
             RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
             BTree termsToBytesTree = createBTree(recordManager);
@@ -83,7 +84,6 @@ public class DiskIndexWriter
                     previousID = currentID;
                 }
             }
-            System.out.println(IdToWeights.size());
             //Calculate document weights and write them out
             for(int i = 0; i < corpusSize; i++)
             {
