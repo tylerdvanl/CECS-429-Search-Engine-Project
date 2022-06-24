@@ -1,9 +1,12 @@
 package cecs429.indexes;
 
 import java.io.EOFException;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,11 +21,31 @@ public class DiskPositionalIndex implements Index{
     RecordManager recordManager;
     BTree tree;
     long bTreeId;
+    Path absolutePathSave;
 
+    //Default Constructor
     public DiskPositionalIndex() throws IOException
     {
         recordManager = RecordManagerFactory.createRecordManager("Terms");
         bTreeId = recordManager.getNamedObject("TermsAndPositions");
+        absolutePathSave = Paths.get("index\\");
+
+        
+        if(bTreeId == 0)
+        {
+            System.out.println("Could not load tree");
+            throw new IOException();
+        }
+
+        tree = BTree.load(recordManager, bTreeId);
+
+    }
+    //Constructor for specifying a directory to look for postings in.
+    public DiskPositionalIndex(Path savePath) throws IOException
+    {
+        recordManager = RecordManagerFactory.createRecordManager("Terms");
+        bTreeId = recordManager.getNamedObject("TermsAndPositions");
+        absolutePathSave = savePath;
 
         
         if(bTreeId == 0)
@@ -49,20 +72,8 @@ public class DiskPositionalIndex implements Index{
         ArrayList<Posting> postings = new ArrayList<>();
         try 
         {
-            RandomAccessFile termInfoFile = new RandomAccessFile("index\\postings.bin", "r");
-            RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
-            long bTreeId = recordManager.getNamedObject("TermsAndPositions");
-            BTree tree;
-
-            //If the btree could not load, just return an empty arraylist.
-            if(bTreeId == 0)
-            {
-                System.out.println("Could not load tree");
-                termInfoFile.close();
-                return new ArrayList<Posting>();
-            }
+            RandomAccessFile termInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "postings.bin"), "r");
             
-            tree = BTree.load(recordManager, bTreeId);
             int startBytes = (int) tree.find(term); // casting, blegh
             try{
                 termInfoFile.seek(startBytes);
@@ -95,7 +106,7 @@ public class DiskPositionalIndex implements Index{
             }
             catch(EOFException e)
             {
-                System.out.println("End of FIle");
+                System.out.println("End of File");
             }
             
             termInfoFile.close();
@@ -124,25 +135,11 @@ public class DiskPositionalIndex implements Index{
         *   This should give us the postings we require.
         *   Uses seek on a RandomAccessFile object.
         */
-
+        ArrayList<Posting> postings = new ArrayList<>();
         try 
         {
-            ArrayList<Posting> postings = new ArrayList<>();
-            RandomAccessFile termInfoFile = new RandomAccessFile("index\\postings.bin", "r");
 
-            RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
-            long bTreeId = recordManager.getNamedObject("TermsAndPositions");
-            BTree tree;
-
-            //If the btree could not load, just return an empty arraylist.
-            if(bTreeId == 0)
-            {
-                System.out.println("Could not load tree");
-                termInfoFile.close();
-                return new ArrayList<Posting>();
-            }
-            
-            tree = BTree.load(recordManager, bTreeId);
+            RandomAccessFile termInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "postings.bin"), "r");
             int startBytes = (int) tree.find(term); // casting, blegh
             termInfoFile.seek(startBytes);
             //read the next int: dft, save it.
@@ -164,7 +161,6 @@ public class DiskPositionalIndex implements Index{
             }   
             
             termInfoFile.close();
-            return postings;
         }
         catch (FileNotFoundException e) 
         {
@@ -174,7 +170,7 @@ public class DiskPositionalIndex implements Index{
         {
             e.printStackTrace();
         }
-        return null;
+        return postings;
     }
 
     @Override
@@ -195,7 +191,7 @@ public class DiskPositionalIndex implements Index{
     {
         try
         {
-            RandomAccessFile termInfoFile = new RandomAccessFile("index\\postings.bin", "r");
+            RandomAccessFile termInfoFile =new RandomAccessFile(new File(absolutePathSave.toString(), "postings.bin"), "r");
             
             int startBytes = (int) tree.find(term); // casting, blegh
             termInfoFile.seek(startBytes);
@@ -216,7 +212,7 @@ public class DiskPositionalIndex implements Index{
         //Open the docweights file, skip to the data for the docID (it should be sequential) then read the double and return it.
         double weight = 0.0;
         final int DOUBLE_BYTE_SIZE = 8;
-        RandomAccessFile weightInfoFile = new RandomAccessFile("index\\docWeights.bin", "r");
+        RandomAccessFile weightInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "docWeights.bin"), "r");
         weightInfoFile.skipBytes(DOUBLE_BYTE_SIZE * docID);
         weight = weightInfoFile.readDouble();
         weightInfoFile.close();
@@ -226,7 +222,7 @@ public class DiskPositionalIndex implements Index{
     @Override
     public long indexSize() throws IOException 
     {
-        RandomAccessFile weightInfoFile = new RandomAccessFile("index\\docWeights.bin", "r");
+        RandomAccessFile weightInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "docWeights.bin"), "r");
         long length = weightInfoFile.length();
         weightInfoFile.close();
         return length/8;

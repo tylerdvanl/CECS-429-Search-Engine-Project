@@ -33,10 +33,9 @@ public class BayesianClassificationRunner
             Path madisonSave = Paths.get("FederalistPapers\\MADISON\\index\\");
             Path disputedSave = Paths.get("FederalistPapers\\DISPUTED\\index\\");
             
-            Index hamiltonIndex = new DiskPositionalIndex();
-            Index jayIndex = new DiskPositionalIndex();
-            Index madisonIndex = new DiskPositionalIndex();
-            Index disputedIndex = new DiskPositionalIndex();
+
+
+
 
             DocumentCorpus hamiltonCorpus = DirectoryCorpus.loadDirectory(Paths.get("FederalistPapers\\HAMILTON\\"));
             DocumentCorpus jayCorpus = DirectoryCorpus.loadDirectory(Paths.get("FederalistPapers\\JAY\\"));
@@ -49,9 +48,20 @@ public class BayesianClassificationRunner
             Index madisonMem = indexCorpus(madisonCorpus);
             Index disputedMem = indexCorpus(disputedCorpus);
             indexWriter.writeIndex(hamiltonMem, hamiltonSave, hamiltonCorpus.getCorpusSize());
-            indexWriter.writeIndex(jayMem, jaySave, jayCorpus.getCorpusSize());
+            Index hamiltonIndex = new DiskPositionalIndex();
+            indexWriter.writeIndex(jayMem, jaySave, jayCorpus.getCorpusSize());           
+            Index jayIndex = new DiskPositionalIndex();
             indexWriter.writeIndex(madisonMem, madisonSave, madisonCorpus.getCorpusSize());
+            Index madisonIndex = new DiskPositionalIndex();
             indexWriter.writeIndex(disputedMem, disputedSave, disputedCorpus.getCorpusSize());
+            Index disputedIndex = new DiskPositionalIndex();
+
+            System.out.println("Hamilton: " + hamiltonIndex.getVocabulary().size());
+            System.out.println("Jay: " + jayIndex.getVocabulary().size());
+            System.out.println("Madison: " + madisonIndex.getVocabulary().size());
+            System.out.println("Disputed: " + disputedIndex.getVocabulary().size());
+
+
 
 
             //boolean exit = false;
@@ -89,6 +99,16 @@ public class BayesianClassificationRunner
 		long timeElapsed = Duration.between(start, finish).toSeconds();
 		System.out.println("Indexed in " + timeElapsed + " seconds.");
 		return positionalIndex;
+	}
+
+    private static void printFirstThousandVocabAndTotal(Index index) throws IOException
+	{
+		ArrayList<String> vocab = new ArrayList<String>(index.getVocabulary());
+		for(int count = 0; count < 1000 && count < vocab.size(); count++)
+		{
+			System.out.println(vocab.get(count));
+		}
+		System.out.println("Total vocabulary size: " + vocab.size());
 	}
     
 }
