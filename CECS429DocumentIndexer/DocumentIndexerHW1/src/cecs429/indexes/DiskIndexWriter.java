@@ -28,7 +28,7 @@ public class DiskIndexWriter
         {
             FileOutputStream postingsOut = new FileOutputStream(new File(absolutePathSave.toString(), "postings.bin"));
             DataOutputStream postingsDataOut = new DataOutputStream(postingsOut);
-            FileOutputStream weightsOut = new FileOutputStream(new File(absolutePathSave.toString(), "postings.bin"));
+            FileOutputStream weightsOut = new FileOutputStream(new File(absolutePathSave.toString(), "docWeights.bin"));
             DataOutputStream weightsDataOut = new DataOutputStream(weightsOut);
             RecordManager recordManager = RecordManagerFactory.createRecordManager("Terms");
             BTree termsToBytesTree = createBTree(recordManager);

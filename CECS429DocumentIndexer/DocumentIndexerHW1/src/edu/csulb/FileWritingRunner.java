@@ -41,7 +41,6 @@ public class FileWritingRunner
         {
 			Scanner in = new Scanner(System.in);
             Path savePath = Paths.get("index\\");
-			Index diskIndex = new DiskPositionalIndex();
 			EnglishTokenProcessor processor = new EnglishTokenProcessor();
 			Path directory = getPathFromUser();
 			DocumentCorpus corpus = DirectoryCorpus.loadDirectory(directory);
@@ -65,6 +64,7 @@ public class FileWritingRunner
 				}
 				else if(modeChoice.equals("2"))
 				{
+					Index diskIndex = new DiskPositionalIndex();
 					while(!exit)
 					{
 						//Ask to do ranked query or boolean query.  Both modes should allow the special queries to work.
