@@ -73,7 +73,9 @@ public class DiskPositionalIndex implements Index{
         try 
         {
             RandomAccessFile termInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "postings.bin"), "r");
-            
+            //If the term does not exist in the tree, return an empty arraylist.
+            if(tree.find(term) == null)
+                return new ArrayList<Posting>();
             int startBytes = (int) tree.find(term); // casting, blegh
             try{
                 termInfoFile.seek(startBytes);
@@ -138,8 +140,10 @@ public class DiskPositionalIndex implements Index{
         ArrayList<Posting> postings = new ArrayList<>();
         try 
         {
-
             RandomAccessFile termInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "postings.bin"), "r");
+            //If the term does not exist in the tree, return an empty arraylist.
+            if(tree.find(term) == null)
+                return new ArrayList<Posting>();
             int startBytes = (int) tree.find(term); // casting, blegh
             termInfoFile.seek(startBytes);
             //read the next int: dft, save it.
@@ -192,7 +196,8 @@ public class DiskPositionalIndex implements Index{
         try
         {
             RandomAccessFile termInfoFile =new RandomAccessFile(new File(absolutePathSave.toString(), "postings.bin"), "r");
-            
+            if(tree.find(term) == null)
+                return 0;
             int startBytes = (int) tree.find(term); // casting, blegh
             termInfoFile.seek(startBytes);
             //read the next int: dft, save it.
