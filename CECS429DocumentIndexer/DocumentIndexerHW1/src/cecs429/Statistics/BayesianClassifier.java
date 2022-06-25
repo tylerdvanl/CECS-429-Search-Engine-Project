@@ -69,14 +69,18 @@ public class BayesianClassifier
 
     private double calculateInformationScore(Double totalDocuments, Double n11, Double n10, Double n01, Double n00)
     {
-        return ((n11/totalDocuments) * log2((totalDocuments*n11)/((n11 + n10)*(n11 + n01)))
-            + (n10/totalDocuments) * log2((totalDocuments*n10)/((n11 + n10)*(n10 + n00)))
-            + (n01/totalDocuments) * log2((totalDocuments*n01)/((n01 + n00)*(n11 + n01)))
-            + (n00/totalDocuments) * log2((totalDocuments*n00)/((n01 + n00)*(n10 + n00))));
+        return ((n11/totalDocuments) * (log2(totalDocuments*n11) - log2((n11 + n10)*(n11 + n01)))
+            + (n10/totalDocuments) * (log2(totalDocuments*n10) - log2((n11 + n10)*(n10 + n00)))
+            + (n01/totalDocuments) * (log2(totalDocuments*n01) - log2((n01 + n00)*(n11 + n01)))
+            + (n00/totalDocuments) * (log2(totalDocuments*n00) - log2((n01 + n00)*(n10 + n00))));
     }
 
     private double log2(Double argument)
     {
+        //This is probably improper, but I'm unsure of how to handle this in this specific use case.
+        if(argument == 0)
+            return 0;
+
         return Math.log(argument)/Math.log(2);
     }
 }

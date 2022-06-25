@@ -7,8 +7,10 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.PriorityQueue;
 import java.util.Scanner;
 
+import cecs429.Statistics.BayesianClassifier;
 import cecs429.documents.DirectoryCorpus;
 import cecs429.documents.Document;
 import cecs429.documents.DocumentCorpus;
@@ -18,6 +20,7 @@ import cecs429.indexes.Index;
 import cecs429.indexes.InvertedPositionalIndex;
 import cecs429.text.EnglishTokenProcessor;
 import cecs429.text.EnglishTokenStream;
+import cecs429.utilities.TermInformationScorePair;
 
 public class BayesianClassificationRunner 
 {
@@ -33,10 +36,6 @@ public class BayesianClassificationRunner
             Path madisonSave = Paths.get("FederalistPapers\\MADISON\\index\\");
             Path disputedSave = Paths.get("FederalistPapers\\DISPUTED\\index\\");
             
-
-
-
-
             DocumentCorpus hamiltonCorpus = DirectoryCorpus.loadDirectory(Paths.get("FederalistPapers\\HAMILTON\\"));
             DocumentCorpus jayCorpus = DirectoryCorpus.loadDirectory(Paths.get("FederalistPapers\\JAY\\"));
             DocumentCorpus madisonCorpus = DirectoryCorpus.loadDirectory(Paths.get("FederalistPapers\\MADISON\\"));
@@ -48,20 +47,30 @@ public class BayesianClassificationRunner
             Index madisonMem = indexCorpus(madisonCorpus);
             Index disputedMem = indexCorpus(disputedCorpus);
             indexWriter.writeIndex(hamiltonMem, hamiltonSave, hamiltonCorpus.getCorpusSize());
-            Index hamiltonIndex = new DiskPositionalIndex();
+            Index hamiltonIndex = new DiskPositionalIndex(hamiltonSave);
             indexWriter.writeIndex(jayMem, jaySave, jayCorpus.getCorpusSize());           
-            Index jayIndex = new DiskPositionalIndex();
+            Index jayIndex = new DiskPositionalIndex(jaySave);
             indexWriter.writeIndex(madisonMem, madisonSave, madisonCorpus.getCorpusSize());
-            Index madisonIndex = new DiskPositionalIndex();
+            Index madisonIndex = new DiskPositionalIndex(madisonSave);
             indexWriter.writeIndex(disputedMem, disputedSave, disputedCorpus.getCorpusSize());
-            Index disputedIndex = new DiskPositionalIndex();
+            Index disputedIndex = new DiskPositionalIndex(disputedSave);
 
             System.out.println("Hamilton: " + hamiltonIndex.getVocabulary().size());
             System.out.println("Jay: " + jayIndex.getVocabulary().size());
             System.out.println("Madison: " + madisonIndex.getVocabulary().size());
             System.out.println("Disputed: " + disputedIndex.getVocabulary().size());
 
-
+            ArrayList<Index> trainingSet = new ArrayList<>();
+            trainingSet.add(hamiltonIndex);
+            trainingSet.add(jayIndex);
+            trainingSet.add(madisonIndex);
+            BayesianClassifier classifier = new BayesianClassifier(disputedIndex, trainingSet);
+            PriorityQueue<TermInformationScorePair> topScores = classifier.mutualInformation(trainingSet);
+            for(int i = 0; i < topScores.size() && i < 50; i++)
+            {
+                TermInformationScorePair score = topScores.poll();
+                System.out.println(i + ": Term: " + score.getTerm() + " || Score: " + score.getInfoScore());
+            }
 
 
             //boolean exit = false;
@@ -70,7 +79,6 @@ public class BayesianClassificationRunner
         {
             e.printStackTrace();
         }
-
     }
 
     public static Index indexCorpus(DocumentCorpus corpus) 
