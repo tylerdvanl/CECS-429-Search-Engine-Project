@@ -61,10 +61,29 @@ public class BayesianClassifier
                 }
                 double score = calculateInformationScore(totalDocuments, (double) index.getDocumentFrequency(term), docsWithTermInOtherIndexes, 
                     docsInIndex -index.getDocumentFrequency(term), totalDocsInOtherIndexes - docsWithTermInOtherIndexes);
-                informationScores.add(new TermInformationScorePair(term, score));
+                
+                if(Double.isNaN(score))
+                    informationScores.add(new TermInformationScorePair(term, 0.0));
+                else    
+                    informationScores.add(new TermInformationScorePair(term, score));
             }
         }
         return informationScores;
+    }
+
+    public double getClassWeight(Index index, List<String> tStar)
+    {
+        double classWeight = 0.0;
+        for(String term : tStar)
+        {
+            classWeight += (index.getTermFrequency(term) + 1);
+        }
+        return classWeight;
+    }
+
+    public double conditionalProbability(String term, Index index, double classWeight)
+    {
+        return ((index.getTermFrequency(term) + 1)/(classWeight));
     }
 
     private double calculateInformationScore(Double totalDocuments, Double n11, Double n10, Double n01, Double n00)

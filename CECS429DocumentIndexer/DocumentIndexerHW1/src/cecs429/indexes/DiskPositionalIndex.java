@@ -232,4 +232,41 @@ public class DiskPositionalIndex implements Index{
         weightInfoFile.close();
         return length/8;
     }
+    @Override
+    public int getTermFrequency(String term) 
+    {
+        int termFrequency = 0;
+        try
+        {
+            RandomAccessFile termInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "postings.bin"), "r");
+            //If the term does not exist in the tree, return an empty arraylist.
+            if(tree.find(term) == null)
+                return 0;
+            int startBytes = (int) tree.find(term); // casting, blegh
+            termInfoFile.seek(startBytes);
+
+            //Read dft to see how many documents we need to look at.
+            int documentFrequency = termInfoFile.readInt();
+            //Now we scan the file for tft values, dft times.  Some of the data we'll need to skip over.
+            int i = 0;
+            while(i < documentFrequency)
+            {
+                //The next two values are the docID(Gap) and weight (12 bytes).  Skip over them.
+                termInfoFile.skipBytes(12);
+                //Next value is tft; this is our desired value.
+                int tft = termInfoFile.readInt();
+                termFrequency += tft;
+                //Now, we need to skip past all the positions in the posting. (4 * tft bytes)
+                termInfoFile.skipBytes(4 * tft);
+                //Increment i so we know how many documents we've looked at so far.
+                i++;
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+        return termFrequency;
+
+    }
 }

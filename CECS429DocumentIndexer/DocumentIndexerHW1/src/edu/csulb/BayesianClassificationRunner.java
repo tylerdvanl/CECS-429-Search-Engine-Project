@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Scanner;
 
@@ -66,10 +67,24 @@ public class BayesianClassificationRunner
             trainingSet.add(madisonIndex);
             BayesianClassifier classifier = new BayesianClassifier(disputedIndex, trainingSet);
             PriorityQueue<TermInformationScorePair> topScores = classifier.mutualInformation(trainingSet);
-            for(int i = 0; i < topScores.size() && i < 50; i++)
+            /*for(int i = 0; i < topScores.size() && i < 50; i++)
             {
                 TermInformationScorePair score = topScores.poll();
                 System.out.println(i + ": Term: " + score.getTerm() + " || Score: " + score.getInfoScore());
+            }*/
+            List<String> tStar = new ArrayList<>();
+            tStar = getTopDiscriminatingTerms(50, topScores);
+            System.out.println("Top Terms: ");
+            System.out.println(tStar);
+            System.out.println("Term Frequencies in Hamilton: ");
+            for(String term : tStar)
+            {
+                System.out.println("Term: " + term + " || Occurances: " + hamiltonIndex.getTermFrequency(term));
+            }
+            System.out.println("Conditional probabilities in Hamilton: ");
+            for(String term : tStar)
+            {
+                System.out.println("Term: " + term + " || Probability: " + classifier.conditionalProbability(term, hamiltonIndex, classifier.getClassWeight(hamiltonIndex, tStar)));
             }
 
 
@@ -109,7 +124,7 @@ public class BayesianClassificationRunner
 		return positionalIndex;
 	}
 
-    private static void printFirstThousandVocabAndTotal(Index index) throws IOException
+    public static void printFirstThousandVocabAndTotal(Index index) throws IOException
 	{
 		ArrayList<String> vocab = new ArrayList<String>(index.getVocabulary());
 		for(int count = 0; count < 1000 && count < vocab.size(); count++)
@@ -118,5 +133,23 @@ public class BayesianClassificationRunner
 		}
 		System.out.println("Total vocabulary size: " + vocab.size());
 	}
+
+    public static List<String> getTopDiscriminatingTerms(int amount, PriorityQueue<TermInformationScorePair> termsAndScores)
+    {
+        List<String> topTerms = new ArrayList<>();
+        int i = 0;
+        while(i < amount)
+        {
+            String next = termsAndScores.peek().getTerm();
+            if(!topTerms.contains(next))
+            {
+                topTerms.add(termsAndScores.poll().getTerm());
+                i++;
+            }
+            else
+                termsAndScores.poll();
+        }
+        return topTerms;
+    }
     
 }
