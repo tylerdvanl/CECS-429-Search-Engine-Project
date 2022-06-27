@@ -77,7 +77,7 @@ public class BayesianClassifier
     public List<Integer> classify(Index targetIndex, List<Index> trainingSet, List<String> tStar) throws FileNotFoundException, IOException
     {
         List<Integer> topClasses = new ArrayList<Integer>((int) targetIndex.indexSize());
-        double probabilityOfClass = 1/targetIndex.indexSize();
+        double trainingSetSize = indexSetTotalDocuments(trainingSet);
         List<HashMap<String, List<Posting>>> postingsWithTermsInIndexes = new ArrayList<>();
         for(Index index : trainingSet)
         {
@@ -109,14 +109,15 @@ public class BayesianClassifier
                         }
                     }
                 }
+                double probabilityOfClass = (trainingSet.get(classNum).indexSize())/trainingSetSize;
                 //Multiply all the factors, and put the product into the map with the classNum.
-                classNumToTotalProbability.put(classNum, (probabilityOfClass + multiplyAll(factors)));
+                classNumToTotalProbability.put(classNum, (log2(probabilityOfClass) + sumAll(factors)));
             }
             //Now we can grab the class with the maximum probability value in our map.
             int classWithMaxProbability = 0;
             for(int i = 1; i < trainingSet.size(); i++)
             {
-                if(classNumToTotalProbability.get(i) > classNumToTotalProbability.get(classWithMaxProbability))
+                if(classNumToTotalProbability.get(i) < classNumToTotalProbability.get(classWithMaxProbability))
                     classWithMaxProbability = i;
             }
             topClasses.add(classWithMaxProbability);
@@ -136,7 +137,7 @@ public class BayesianClassifier
 
     public double conditionalProbability(String term, Index index, double classWeight)
     {
-        return (log2((index.getTermFrequency(term) + 1)/(classWeight)));
+        return (log2(((double) index.getTermFrequency(term) + 1.0)/(classWeight)));
     }
 
     private double calculateInformationScore(Double totalDocuments, Double n11, Double n10, Double n01, Double n00)
@@ -156,13 +157,23 @@ public class BayesianClassifier
         return Math.log(argument)/Math.log(2);
     }
 
-    private double multiplyAll(List<Double> factors)
+    private double sumAll(List<Double> factors)
     {
         double product = 1;
         for(Double factor : factors)
         {
-            product *= factor;
+            product += factor;
         }
         return product;
+    }
+
+    private int indexSetTotalDocuments(List<Index> set) throws FileNotFoundException, IOException
+    {
+        int sum = 0;
+        for(Index index : set)
+        {
+            sum += index.indexSize();
+        }
+        return sum;
     }
 }
