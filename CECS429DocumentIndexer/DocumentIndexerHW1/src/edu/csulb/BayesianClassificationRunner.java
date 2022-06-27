@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Scanner;
@@ -19,6 +20,7 @@ import cecs429.indexes.DiskIndexWriter;
 import cecs429.indexes.DiskPositionalIndex;
 import cecs429.indexes.Index;
 import cecs429.indexes.InvertedPositionalIndex;
+import cecs429.indexes.Posting;
 import cecs429.text.EnglishTokenProcessor;
 import cecs429.text.EnglishTokenStream;
 import cecs429.utilities.TermInformationScorePair;
@@ -76,16 +78,9 @@ public class BayesianClassificationRunner
             tStar = getTopDiscriminatingTerms(50, topScores);
             System.out.println("Top Terms: ");
             System.out.println(tStar);
-            System.out.println("Term Frequencies in Hamilton: ");
-            for(String term : tStar)
-            {
-                System.out.println("Term: " + term + " || Occurances: " + hamiltonIndex.getTermFrequency(term));
-            }
-            System.out.println("Conditional probabilities in Hamilton: ");
-            for(String term : tStar)
-            {
-                System.out.println("Term: " + term + " || Probability: " + classifier.conditionalProbability(term, hamiltonIndex, classifier.getClassWeight(hamiltonIndex, tStar)));
-            }
+            List<Integer> topClasses = classifier.classify(disputedIndex, trainingSet, tStar);
+            System.out.println(topClasses);
+
 
 
             //boolean exit = false;

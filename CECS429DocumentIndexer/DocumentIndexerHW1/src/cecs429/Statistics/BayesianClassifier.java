@@ -3,10 +3,12 @@ package cecs429.Statistics;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
 
 import cecs429.indexes.Index;
+import cecs429.indexes.Posting;
 import cecs429.utilities.TermInformationScorePair;
 import cecs429.utilities.TermInformationScorePairSortByScore;
 
@@ -71,6 +73,57 @@ public class BayesianClassifier
         return informationScores;
     }
 
+    //TODO: This is some disastrously bad OOP, fix it if I have time.
+    public List<Integer> classify(Index targetIndex, List<Index> trainingSet, List<String> tStar) throws FileNotFoundException, IOException
+    {
+        List<Integer> topClasses = new ArrayList<Integer>((int) targetIndex.indexSize());
+        double probabilityOfClass = 1/targetIndex.indexSize();
+        List<HashMap<String, List<Posting>>> postingsWithTermsInIndexes = new ArrayList<>();
+        for(Index index : trainingSet)
+        {
+            HashMap<String, List<Posting>> termToPostings = new HashMap<>();
+            for(String term : tStar)
+            {
+                termToPostings.put(term, index.getPostingsNoPositions(term));
+            }
+            postingsWithTermsInIndexes.add(termToPostings);
+        }
+        //Now we have the postings for each term, for each class.  Now we need to figure out which documents have which terms.
+        for(int docId = 0; docId < targetIndex.indexSize(); docId++)
+        {
+            HashMap<Integer, Double> classNumToTotalProbability = new HashMap<>();
+            for(int classNum = 0; classNum < trainingSet.size(); classNum++)
+            {
+                //Grab all the factors that will be multiplied together for this class.
+                //These will be the conditional probability of the term in this class, if the document has the term.
+                List<Double> factors = new ArrayList<Double>();
+                for(String term : tStar)
+                {
+                    List<Posting> postings = postingsWithTermsInIndexes.get(classNum).get(term);
+                    for(Posting posting : postings)
+                    {
+                        if(posting.getDocumentId() == docId)
+                        {
+                            factors.add(conditionalProbability(term, trainingSet.get(classNum), getClassWeight(trainingSet.get(classNum), tStar)));
+                            break; //There will never be a duplicate docId in a postings list.
+                        }
+                    }
+                }
+                //Multiply all the factors, and put the product into the map with the classNum.
+                classNumToTotalProbability.put(classNum, (probabilityOfClass + multiplyAll(factors)));
+            }
+            //Now we can grab the class with the maximum probability value in our map.
+            int classWithMaxProbability = 0;
+            for(int i = 1; i < trainingSet.size(); i++)
+            {
+                if(classNumToTotalProbability.get(i) > classNumToTotalProbability.get(classWithMaxProbability))
+                    classWithMaxProbability = i;
+            }
+            topClasses.add(classWithMaxProbability);
+        }
+        return topClasses;
+    }
+
     public double getClassWeight(Index index, List<String> tStar)
     {
         double classWeight = 0.0;
@@ -83,7 +136,7 @@ public class BayesianClassifier
 
     public double conditionalProbability(String term, Index index, double classWeight)
     {
-        return ((index.getTermFrequency(term) + 1)/(classWeight));
+        return (log2((index.getTermFrequency(term) + 1)/(classWeight)));
     }
 
     private double calculateInformationScore(Double totalDocuments, Double n11, Double n10, Double n01, Double n00)
@@ -101,5 +154,15 @@ public class BayesianClassifier
             return 0;
 
         return Math.log(argument)/Math.log(2);
+    }
+
+    private double multiplyAll(List<Double> factors)
+    {
+        double product = 1;
+        for(Double factor : factors)
+        {
+            product *= factor;
+        }
+        return product;
     }
 }
