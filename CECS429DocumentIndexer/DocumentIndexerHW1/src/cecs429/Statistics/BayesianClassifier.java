@@ -91,9 +91,16 @@ public class BayesianClassifier
             }
             postingsWithTermsInIndexes.add(termToPostings);
         }
-        //Now we have the postings for each term, for each class.  Now we need to figure out which documents have which terms.
+        //Now we have the postings for each term, for each class.
+        //For each new document, check to see if it contains a t* term, then calculate the probability of that term in each training class.
+        HashMap<String, List<Posting>> newDocumentsTermsToPostings = new HashMap<>();
+        for(String term : tStar)
+        {
+            newDocumentsTermsToPostings.put(term, targetIndex.getPostingsNoPositions(term));
+        }
         for(int docId = 0; docId < targetIndex.indexSize(); docId++)
         {
+
             HashMap<Integer, Double> classNumToTotalProbability = new HashMap<>();
             for(int classNum = 0; classNum < trainingSet.size(); classNum++)
             {
@@ -103,15 +110,15 @@ public class BayesianClassifier
                 List<Double> factors = new ArrayList<Double>();
                 for(String term : tStar)
                 {
-                    List<Posting> postings = postingsWithTermsInIndexes.get(classNum).get(term);
-                    for(Posting posting : postings)
-                    {
-                        if(posting.getDocumentId() == docId)
+                    List<Posting> newDocsWithTerm = newDocumentsTermsToPostings.get(term);
+                    for(Posting posting : newDocsWithTerm)
                         {
-                            factors.add(Math.log(conditionalProbability(term, trainingSet.get(classNum), weight)));
-                            break; //There will never be a duplicate docId in a postings list.
+                            if(posting.getDocumentId() == docId)
+                            {
+                                factors.add(Math.log(conditionalProbability(term, trainingSet.get(classNum), weight)));
+                                break; //There will never be a duplicate docId in a postings list.
+                            }
                         }
-                    }
                 }
                 double probabilityOfClass = ((double) trainingSet.get(classNum).indexSize())/((double) trainingSetSize);
                 //Multiply all the factors, and put the product into the map with the classNum.
@@ -121,7 +128,7 @@ public class BayesianClassifier
             int classWithMaxProbability = 0;
             for(int i = 1; i < trainingSet.size(); i++)
             {
-                if(classNumToTotalProbability.get(i) < classNumToTotalProbability.get(classWithMaxProbability))
+                if(classNumToTotalProbability.get(i) > classNumToTotalProbability.get(classWithMaxProbability))
                     classWithMaxProbability = i;
             }
             topClasses.add(classWithMaxProbability);
