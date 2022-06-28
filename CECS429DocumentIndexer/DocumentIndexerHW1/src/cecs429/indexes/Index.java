@@ -20,8 +20,6 @@ public interface Index {
 	List<Posting> getPostingsNoPositions(String term);
 	
 	int getDocumentFrequency(String term);
-
-	int getTermFrequency(String term);
 	
 	/**
 	 * A (sorted) list of all terms in the index vocabulary.

@@ -26,7 +26,6 @@ public class BayesianClassifier
 
     public PriorityQueue<TermInformationScorePair> mutualInformation(List<Index> classes) throws FileNotFoundException, IOException
     {
-        //TODO: Give this a type
         PriorityQueue<TermInformationScorePair> informationScores = new PriorityQueue<>(new TermInformationScorePairSortByScore());
         //TODO: Mutual Information algorithm; big giant equation for each term/class pairing.
         Double totalDocuments = 0.0;
@@ -61,8 +60,12 @@ public class BayesianClassifier
                     if(k != i)
                         docsWithTermInOtherIndexes += classes.get(k).getDocumentFrequency(term);
                 }
-                double score = calculateInformationScore(totalDocuments, (double) index.getDocumentFrequency(term), docsWithTermInOtherIndexes, 
-                    docsInIndex -index.getDocumentFrequency(term), totalDocsInOtherIndexes - docsWithTermInOtherIndexes);
+                double score = calculateInformationScore(
+                    totalDocuments, 
+                    (double) index.getDocumentFrequency(term), 
+                    docsWithTermInOtherIndexes, 
+                    (double) docsInIndex -index.getDocumentFrequency(term), 
+                    totalDocsInOtherIndexes - docsWithTermInOtherIndexes);
                 
                 if(Double.isNaN(score))
                     informationScores.add(new TermInformationScorePair(term, 0.0));
@@ -94,6 +97,7 @@ public class BayesianClassifier
             HashMap<Integer, Double> classNumToTotalProbability = new HashMap<>();
             for(int classNum = 0; classNum < trainingSet.size(); classNum++)
             {
+                double weight = getClassWeight(trainingSet.get(classNum), tStar);
                 //Grab all the factors that will be multiplied together for this class.
                 //These will be the conditional probability of the term in this class, if the document has the term.
                 List<Double> factors = new ArrayList<Double>();
@@ -104,20 +108,20 @@ public class BayesianClassifier
                     {
                         if(posting.getDocumentId() == docId)
                         {
-                            factors.add(conditionalProbability(term, trainingSet.get(classNum), getClassWeight(trainingSet.get(classNum), tStar)));
+                            factors.add(conditionalProbability(term, trainingSet.get(classNum), weight));
                             break; //There will never be a duplicate docId in a postings list.
                         }
                     }
                 }
-                double probabilityOfClass = (trainingSet.get(classNum).indexSize())/trainingSetSize;
+                double probabilityOfClass = ((double) trainingSet.get(classNum).indexSize())/((double) trainingSetSize);
                 //Multiply all the factors, and put the product into the map with the classNum.
-                classNumToTotalProbability.put(classNum, (log2(probabilityOfClass) + sumAll(factors)));
+                classNumToTotalProbability.put(classNum, (Math.log(probabilityOfClass) + sumAll(factors)));
             }
             //Now we can grab the class with the maximum probability value in our map.
             int classWithMaxProbability = 0;
             for(int i = 1; i < trainingSet.size(); i++)
             {
-                if(classNumToTotalProbability.get(i) < classNumToTotalProbability.get(classWithMaxProbability))
+                if(classNumToTotalProbability.get(i) > classNumToTotalProbability.get(classWithMaxProbability))
                     classWithMaxProbability = i;
             }
             topClasses.add(classWithMaxProbability);
@@ -130,14 +134,15 @@ public class BayesianClassifier
         double classWeight = 0.0;
         for(String term : tStar)
         {
-            classWeight += (index.getTermFrequency(term) + 1);
+            classWeight += ((double) index.getDocumentFrequency(term) + 1.0);
         }
         return classWeight;
     }
 
     public double conditionalProbability(String term, Index index, double classWeight)
     {
-        return (log2(((double) index.getTermFrequency(term) + 1.0)/(classWeight)));
+        int frequency = index.getDocumentFrequency(term);
+        return Math.log((frequency + 1.0)/(classWeight));
     }
 
     private double calculateInformationScore(Double totalDocuments, Double n11, Double n10, Double n01, Double n00)
@@ -150,16 +155,12 @@ public class BayesianClassifier
 
     private double log2(Double argument)
     {
-        //This is probably improper, but I'm unsure of how to handle this in this specific use case.
-        if(argument == 0)
-            return 0;
-
         return Math.log(argument)/Math.log(2);
     }
 
     private double sumAll(List<Double> factors)
     {
-        double product = 1;
+        double product = 0;
         for(Double factor : factors)
         {
             product += factor;
@@ -172,7 +173,7 @@ public class BayesianClassifier
         int sum = 0;
         for(Index index : set)
         {
-            sum += index.indexSize();
+            sum += (int) index.indexSize();
         }
         return sum;
     }

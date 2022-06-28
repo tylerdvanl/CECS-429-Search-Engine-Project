@@ -107,10 +107,4 @@ public class InvertedPositionalIndex implements Index
     {
         return 0.0;
     }
-
-    @Override
-    public int getTermFrequency(String term) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
 }
