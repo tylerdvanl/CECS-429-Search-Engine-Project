@@ -108,7 +108,7 @@ public class BayesianClassifier
                     {
                         if(posting.getDocumentId() == docId)
                         {
-                            factors.add(conditionalProbability(term, trainingSet.get(classNum), weight));
+                            factors.add(Math.log(conditionalProbability(term, trainingSet.get(classNum), weight)));
                             break; //There will never be a duplicate docId in a postings list.
                         }
                     }
@@ -121,7 +121,7 @@ public class BayesianClassifier
             int classWithMaxProbability = 0;
             for(int i = 1; i < trainingSet.size(); i++)
             {
-                if(classNumToTotalProbability.get(i) > classNumToTotalProbability.get(classWithMaxProbability))
+                if(classNumToTotalProbability.get(i) < classNumToTotalProbability.get(classWithMaxProbability))
                     classWithMaxProbability = i;
             }
             topClasses.add(classWithMaxProbability);
@@ -142,7 +142,7 @@ public class BayesianClassifier
     public double conditionalProbability(String term, Index index, double classWeight)
     {
         int frequency = index.getDocumentFrequency(term);
-        return Math.log((frequency + 1.0)/(classWeight));
+        return ((frequency + 1.0)/(classWeight));
     }
 
     private double calculateInformationScore(Double totalDocuments, Double n11, Double n10, Double n01, Double n00)
