@@ -123,6 +123,12 @@ public class BayesianClassifier
                 double probabilityOfClass = ((double) trainingSet.get(classNum).indexSize())/((double) trainingSetSize);
                 //Multiply all the factors, and put the product into the map with the classNum.
                 classNumToTotalProbability.put(classNum, (Math.log(probabilityOfClass) + sumAll(factors)));
+
+            }
+            //This is for demo purposes, not a functional piece of code!
+            if(docId == 0)
+            {
+                printRequestedDemoInformation(docId, classNumToTotalProbability, trainingSet);
             }
             //Now we can grab the class with the maximum probability value in our map.
             int classWithMaxProbability = 0;
@@ -183,5 +189,14 @@ public class BayesianClassifier
             sum += (int) index.indexSize();
         }
         return sum;
+    }
+
+    private void printRequestedDemoInformation(int newDocId, HashMap<Integer, Double> classToScore, List<Index> indexes)
+    {
+        System.out.println("New Document ID: " + newDocId + " Score for each potential index follows:");
+        for(int i = 0; i < indexes.size(); i++)
+        {
+            System.out.println("Score for Index in " + indexes.get(i).getSavePath() + " || " + classToScore.get(i));
+        }
     }
 }

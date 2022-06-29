@@ -1,5 +1,6 @@
 package cecs429.indexes;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -105,6 +106,13 @@ public class InvertedPositionalIndex implements Index
 
     public double getDocWeight(int docID)
     {
+        //TODO: make this return something correct
         return 0.0;
+    }
+
+    @Override
+    public Path getSavePath() {
+        // TODO Make this return something correct
+        return null;
     }
 }

@@ -232,4 +232,10 @@ public class DiskPositionalIndex implements Index{
         weightInfoFile.close();
         return length/8;
     }
+    
+    @Override
+    public Path getSavePath() 
+    {
+        return absolutePathSave;
+    }
 }

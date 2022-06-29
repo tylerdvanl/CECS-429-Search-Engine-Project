@@ -31,7 +31,6 @@ public class BayesianClassificationRunner
     {
         try
         {
-            Scanner in = new Scanner(System.in);
             EnglishTokenProcessor processor = new EnglishTokenProcessor();
             
             Path hamiltonSave = Paths.get("FederalistPapers\\HAMILTON\\index\\");
@@ -76,14 +75,15 @@ public class BayesianClassificationRunner
             }*/
             List<String> tStar = new ArrayList<>();
             tStar = getTopDiscriminatingTerms(50, topScores);
-            System.out.println("Top Terms: ");
+            System.out.println("Top Discriminating Terms:");
             System.out.println(tStar);
             List<Integer> topClasses = classifier.classify(disputedIndex, trainingSet, tStar);
-            System.out.println(topClasses);
-
-
-
-            //boolean exit = false;
+            System.out.println("Class decisions per document: ");
+            for(int i = 0; i < disputedIndex.indexSize(); i++)
+            {
+                System.out.println("Document: " + i + ": " + disputedCorpus.getDocument(i).getTitle() + " most likely belongs to index " +
+                trainingSet.get(topClasses.get(i)).getSavePath());
+            }
         }
         catch(IOException e)
         {
@@ -138,6 +138,8 @@ public class BayesianClassificationRunner
             String next = termsAndScores.peek().getTerm();
             if(!topTerms.contains(next))
             {
+                if(i < 10)
+                    System.out.println("Term: " + next + " || Mutual Information Score: " + termsAndScores.peek().getInfoScore());
                 topTerms.add(termsAndScores.poll().getTerm());
                 i++;
             }
@@ -146,5 +148,7 @@ public class BayesianClassificationRunner
         }
         return topTerms;
     }
+
+    
     
 }

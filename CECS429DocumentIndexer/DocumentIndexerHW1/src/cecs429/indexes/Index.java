@@ -2,6 +2,7 @@ package cecs429.indexes;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 /**
@@ -28,6 +29,8 @@ public interface Index {
 	List<String> getVocabulary() throws IOException;
 
 	double getDocWeight(int docId) throws IOException;
+
+	Path getSavePath();
 
 	long indexSize() throws FileNotFoundException, IOException;
 }
