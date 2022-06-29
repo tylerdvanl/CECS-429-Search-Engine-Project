@@ -81,15 +81,6 @@ public class BayesianClassifier
     {
         List<Integer> topClasses = new ArrayList<Integer>((int) targetIndex.indexSize());
         double trainingSetSize = indexSetTotalDocuments(trainingSet);
-        List<HashMap<String, List<Posting>>> postingsWithTermsInIndexes = new ArrayList<>();
-        for(Index index : trainingSet)
-        {
-            HashMap<String, List<Posting>> termToPostings = new HashMap<>();
-            for(String term : tStar)
-                termToPostings.put(term, index.getPostingsNoPositions(term));
-            
-            postingsWithTermsInIndexes.add(termToPostings);
-        }
         //Now we have the postings for each term, for each class.
         //For each new document, check to see if it contains a t* term, then calculate the probability of that term in each training class.
         HashMap<String, List<Posting>> newDocumentsTermsToPostings = new HashMap<>();
