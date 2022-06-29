@@ -7,10 +7,8 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.Scanner;
 
 import cecs429.Statistics.BayesianClassifier;
 import cecs429.documents.DirectoryCorpus;
@@ -20,7 +18,6 @@ import cecs429.indexes.DiskIndexWriter;
 import cecs429.indexes.DiskPositionalIndex;
 import cecs429.indexes.Index;
 import cecs429.indexes.InvertedPositionalIndex;
-import cecs429.indexes.Posting;
 import cecs429.text.EnglishTokenProcessor;
 import cecs429.text.EnglishTokenStream;
 import cecs429.utilities.TermInformationScorePair;
@@ -61,7 +58,7 @@ public class BayesianClassificationRunner
             trainingSet.add(hamiltonIndex);
             trainingSet.add(jayIndex);
             trainingSet.add(madisonIndex);
-            BayesianClassifier classifier = new BayesianClassifier(disputedIndex, trainingSet);
+            BayesianClassifier classifier = new BayesianClassifier();
             PriorityQueue<TermInformationScorePair> topScores = classifier.mutualInformation(trainingSet);
             /*for(int i = 0; i < topScores.size() && i < 50; i++)
             {
@@ -72,13 +69,13 @@ public class BayesianClassificationRunner
             int cutoff = 50;
             tStar = getTopDiscriminatingTerms(cutoff, topScores);
 
-            System.out.println("Top " + cutoff + " Discriminating Terms:");
+            System.out.println("\nTop " + cutoff + " Discriminating Terms:");
             System.out.println(tStar);
             List<Integer> topClasses = classifier.classify(disputedIndex, trainingSet, tStar);
             System.out.println("\nClass decisions per document: ");
             for(int i = 0; i < disputedIndex.indexSize(); i++)
             {
-                System.out.println("Document " + i + ": " + disputedCorpus.getDocument(i).getTitle() + " most likely belongs to index " +
+                System.out.println("Document " + i + ": " + disputedCorpus.getDocument(i).getTitle() + " most likely belongs to index in " +
                 trainingSet.get(topClasses.get(i)).getSavePath());
             }
         }

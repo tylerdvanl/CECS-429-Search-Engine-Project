@@ -15,19 +15,11 @@ import cecs429.utilities.TermInformationScorePairSortByScore;
 public class BayesianClassifier 
 {
 
-    private Index targetIndex;
-    private List<Index> trainingIndexes;
-
-    public BayesianClassifier(Index target, List<Index> training)
-    {
-        targetIndex = target;
-        trainingIndexes = training;
-    }
 
     public PriorityQueue<TermInformationScorePair> mutualInformation(List<Index> classes) throws FileNotFoundException, IOException
     {
         PriorityQueue<TermInformationScorePair> informationScores = new PriorityQueue<>(new TermInformationScorePairSortByScore());
-        //TODO: Mutual Information algorithm; big giant equation for each term/class pairing.
+        //Mutual Information algorithm; big giant equation for each term/class pairing.
         Double totalDocuments = 0.0;
         ArrayList<Integer> indexSizes = new ArrayList<>();
         for(Index index : classes)

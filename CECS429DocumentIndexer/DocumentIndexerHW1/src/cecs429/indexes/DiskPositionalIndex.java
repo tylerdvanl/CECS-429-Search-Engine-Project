@@ -238,7 +238,6 @@ public class DiskPositionalIndex implements Index, AutoCloseable{
     @Override
     public void close() throws IOException 
     {
-        // TODO Auto-generated method stub
         termInfoFile.close();
         weightInfoFile.close();
     }
