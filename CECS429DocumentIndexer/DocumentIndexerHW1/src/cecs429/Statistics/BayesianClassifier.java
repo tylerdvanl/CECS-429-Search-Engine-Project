@@ -15,8 +15,8 @@ import cecs429.utilities.TermInformationScorePairSortByScore;
 public class BayesianClassifier 
 {
 
-    Index targetIndex;
-    List<Index> trainingIndexes;
+    private Index targetIndex;
+    private List<Index> trainingIndexes;
 
     public BayesianClassifier(Index target, List<Index> training)
     {
@@ -86,18 +86,16 @@ public class BayesianClassifier
         {
             HashMap<String, List<Posting>> termToPostings = new HashMap<>();
             for(String term : tStar)
-            {
                 termToPostings.put(term, index.getPostingsNoPositions(term));
-            }
+            
             postingsWithTermsInIndexes.add(termToPostings);
         }
         //Now we have the postings for each term, for each class.
         //For each new document, check to see if it contains a t* term, then calculate the probability of that term in each training class.
         HashMap<String, List<Posting>> newDocumentsTermsToPostings = new HashMap<>();
         for(String term : tStar)
-        {
             newDocumentsTermsToPostings.put(term, targetIndex.getPostingsNoPositions(term));
-        }
+
         for(int docId = 0; docId < targetIndex.indexSize(); docId++)
         {
 
@@ -123,13 +121,13 @@ public class BayesianClassifier
                 double probabilityOfClass = ((double) trainingSet.get(classNum).indexSize())/((double) trainingSetSize);
                 //Multiply all the factors, and put the product into the map with the classNum.
                 classNumToTotalProbability.put(classNum, (Math.log(probabilityOfClass) + sumAll(factors)));
-
             }
+            //////////////
             //This is for demo purposes, not a functional piece of code!
+            /*//////////////////////
             if(docId == 0)
-            {
                 printRequestedDemoInformation(docId, classNumToTotalProbability, trainingSet);
-            }
+            *//////////////////////
             //Now we can grab the class with the maximum probability value in our map.
             int classWithMaxProbability = 0;
             for(int i = 1; i < trainingSet.size(); i++)
@@ -146,9 +144,8 @@ public class BayesianClassifier
     {
         double classWeight = 0.0;
         for(String term : tStar)
-        {
             classWeight += ((double) index.getDocumentFrequency(term) + 1.0);
-        }
+
         return classWeight;
     }
 
@@ -175,9 +172,8 @@ public class BayesianClassifier
     {
         double product = 0;
         for(Double factor : factors)
-        {
             product += factor;
-        }
+
         return product;
     }
 
@@ -185,9 +181,8 @@ public class BayesianClassifier
     {
         int sum = 0;
         for(Index index : set)
-        {
             sum += (int) index.indexSize();
-        }
+
         return sum;
     }
 
@@ -195,8 +190,7 @@ public class BayesianClassifier
     {
         System.out.println("New Document ID: " + newDocId + " Score for each potential index follows:");
         for(int i = 0; i < indexes.size(); i++)
-        {
             System.out.println("Score for Index in " + indexes.get(i).getSavePath() + " || " + classToScore.get(i));
-        }
+
     }
 }

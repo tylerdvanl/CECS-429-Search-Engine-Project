@@ -18,7 +18,6 @@ import jdbm.helper.StringComparator;
 
 public class DiskIndexWriter 
 {
-
     public ArrayList<Integer> writeIndex(Index index, Path absolutePathSave, int corpusSize)
     {
         ArrayList<Integer> startBytes = new ArrayList<>();

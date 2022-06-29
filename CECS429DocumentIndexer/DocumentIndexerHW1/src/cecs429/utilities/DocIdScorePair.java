@@ -2,8 +2,8 @@ package cecs429.utilities;
 
 public class DocIdScorePair {
 
-    int mDocId;
-    double mScore;
+    private int mDocId;
+    private double mScore;
     
     public DocIdScorePair(int docId, double score)
     {

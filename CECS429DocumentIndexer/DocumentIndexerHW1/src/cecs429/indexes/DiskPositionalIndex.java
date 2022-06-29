@@ -18,10 +18,10 @@ import jdbm.helper.TupleBrowser;
 
 public class DiskPositionalIndex implements Index{
 
-    RecordManager recordManager;
-    BTree tree;
-    long bTreeId;
-    Path absolutePathSave;
+    private RecordManager recordManager;
+    private BTree tree;
+    private long bTreeId;
+    private Path absolutePathSave;
 
     //Default Constructor
     public DiskPositionalIndex() throws IOException
@@ -232,7 +232,7 @@ public class DiskPositionalIndex implements Index{
         weightInfoFile.close();
         return length/8;
     }
-    
+
     @Override
     public Path getSavePath() 
     {

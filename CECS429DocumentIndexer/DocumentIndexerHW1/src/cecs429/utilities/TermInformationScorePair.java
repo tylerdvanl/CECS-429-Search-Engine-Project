@@ -2,8 +2,8 @@ package cecs429.utilities;
 
 public class TermInformationScorePair 
 {
-    String term;
-    double infoScore;
+    private String term;
+    private double infoScore;
 
     public TermInformationScorePair(String term, double score)
     {
