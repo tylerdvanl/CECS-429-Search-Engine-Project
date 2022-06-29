@@ -57,11 +57,6 @@ public class BayesianClassificationRunner
             indexWriter.writeIndex(disputedMem, disputedSave, disputedCorpus.getCorpusSize());
             Index disputedIndex = new DiskPositionalIndex(disputedSave);
 
-            System.out.println("Hamilton: " + hamiltonIndex.getVocabulary().size());
-            System.out.println("Jay: " + jayIndex.getVocabulary().size());
-            System.out.println("Madison: " + madisonIndex.getVocabulary().size());
-            System.out.println("Disputed: " + disputedIndex.getVocabulary().size());
-
             ArrayList<Index> trainingSet = new ArrayList<>();
             trainingSet.add(hamiltonIndex);
             trainingSet.add(jayIndex);
@@ -74,14 +69,16 @@ public class BayesianClassificationRunner
                 System.out.println(i + ": Term: " + score.getTerm() + " || Score: " + score.getInfoScore());
             }*/
             List<String> tStar = new ArrayList<>();
-            tStar = getTopDiscriminatingTerms(50, topScores);
-            System.out.println("Top Discriminating Terms:");
+            int cutoff = 50;
+            tStar = getTopDiscriminatingTerms(cutoff, topScores);
+
+            System.out.println("Top " + cutoff + " Discriminating Terms:");
             System.out.println(tStar);
             List<Integer> topClasses = classifier.classify(disputedIndex, trainingSet, tStar);
-            System.out.println("Class decisions per document: ");
+            System.out.println("\nClass decisions per document: ");
             for(int i = 0; i < disputedIndex.indexSize(); i++)
             {
-                System.out.println("Document: " + i + ": " + disputedCorpus.getDocument(i).getTitle() + " most likely belongs to index " +
+                System.out.println("Document " + i + ": " + disputedCorpus.getDocument(i).getTitle() + " most likely belongs to index " +
                 trainingSet.get(topClasses.get(i)).getSavePath());
             }
         }
@@ -119,16 +116,6 @@ public class BayesianClassificationRunner
 		return positionalIndex;
 	}
 
-    public static void printFirstThousandVocabAndTotal(Index index) throws IOException
-	{
-		ArrayList<String> vocab = new ArrayList<String>(index.getVocabulary());
-		for(int count = 0; count < 1000 && count < vocab.size(); count++)
-		{
-			System.out.println(vocab.get(count));
-		}
-		System.out.println("Total vocabulary size: " + vocab.size());
-	}
-
     public static List<String> getTopDiscriminatingTerms(int amount, PriorityQueue<TermInformationScorePair> termsAndScores)
     {
         List<String> topTerms = new ArrayList<>();
@@ -138,8 +125,10 @@ public class BayesianClassificationRunner
             String next = termsAndScores.peek().getTerm();
             if(!topTerms.contains(next))
             {
+                /*DEMO CODE! NOT A FUNCTIONAL PIECE OF THE PROGRAM 
                 if(i < 10)
                     System.out.println("Term: " + next + " || Mutual Information Score: " + termsAndScores.peek().getInfoScore());
+                */
                 topTerms.add(termsAndScores.poll().getTerm());
                 i++;
             }
