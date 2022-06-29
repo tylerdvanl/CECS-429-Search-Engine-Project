@@ -1,5 +1,6 @@
 package cecs429.indexes;
 
+import java.io.Closeable;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,12 +17,14 @@ import jdbm.btree.BTree;
 import jdbm.helper.Tuple;
 import jdbm.helper.TupleBrowser;
 
-public class DiskPositionalIndex implements Index{
+public class DiskPositionalIndex implements Index, AutoCloseable{
 
     private RecordManager recordManager;
     private BTree tree;
     private long bTreeId;
     private Path absolutePathSave;
+    RandomAccessFile termInfoFile;
+    RandomAccessFile weightInfoFile;
 
     //Default Constructor
     public DiskPositionalIndex() throws IOException
@@ -29,8 +32,9 @@ public class DiskPositionalIndex implements Index{
         recordManager = RecordManagerFactory.createRecordManager("Terms");
         bTreeId = recordManager.getNamedObject("TermsAndPositions");
         absolutePathSave = Paths.get("index\\");
+        termInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "postings.bin"), "r");
+        weightInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "docWeights.bin"), "r");
 
-        
         if(bTreeId == 0)
         {
             System.out.println("Could not load tree");
@@ -46,7 +50,8 @@ public class DiskPositionalIndex implements Index{
         recordManager = RecordManagerFactory.createRecordManager("Terms");
         bTreeId = recordManager.getNamedObject("TermsAndPositions");
         absolutePathSave = savePath;
-
+        termInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "postings.bin"), "r");
+        weightInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "docWeights.bin"), "r");
         
         if(bTreeId == 0)
         {
@@ -72,7 +77,6 @@ public class DiskPositionalIndex implements Index{
         ArrayList<Posting> postings = new ArrayList<>();
         try 
         {
-            RandomAccessFile termInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "postings.bin"), "r");
             //If the term does not exist in the tree, return an empty arraylist.
             if(tree.find(term) == null)
                 return new ArrayList<Posting>();
@@ -110,8 +114,6 @@ public class DiskPositionalIndex implements Index{
             {
                 System.out.println("End of File");
             }
-            
-            termInfoFile.close();
 
         }
         catch (FileNotFoundException e) 
@@ -140,7 +142,6 @@ public class DiskPositionalIndex implements Index{
         ArrayList<Posting> postings = new ArrayList<>();
         try 
         {
-            RandomAccessFile termInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "postings.bin"), "r");
             //If the term does not exist in the tree, return an empty arraylist.
             if(tree.find(term) == null)
                 return new ArrayList<Posting>();
@@ -164,7 +165,6 @@ public class DiskPositionalIndex implements Index{
                 postings.add(new Posting(currentId, weightDT));
             }   
             
-            termInfoFile.close();
         }
         catch (FileNotFoundException e) 
         {
@@ -178,8 +178,8 @@ public class DiskPositionalIndex implements Index{
     }
 
     @Override
-    public List<String> getVocabulary() throws IOException {
-        
+    public List<String> getVocabulary() throws IOException 
+    {      
             ArrayList<String> terms = new ArrayList<>();
             Tuple browsedTuple = new Tuple();
             TupleBrowser browser = tree.browse();
@@ -195,14 +195,12 @@ public class DiskPositionalIndex implements Index{
     {
         try
         {
-            RandomAccessFile termInfoFile =new RandomAccessFile(new File(absolutePathSave.toString(), "postings.bin"), "r");
             if(tree.find(term) == null)
                 return 0;
             int startBytes = (int) tree.find(term); // casting, blegh
             termInfoFile.seek(startBytes);
             //read the next int: dft, save it.
             int documentFrequency = termInfoFile.readInt();
-            termInfoFile.close();
             return documentFrequency;
         }
         catch(IOException e)
@@ -217,19 +215,17 @@ public class DiskPositionalIndex implements Index{
         //Open the docweights file, skip to the data for the docID (it should be sequential) then read the double and return it.
         double weight = 0.0;
         final int DOUBLE_BYTE_SIZE = 8;
-        RandomAccessFile weightInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "docWeights.bin"), "r");
+        //Go to the beginning of the file.
+        weightInfoFile.seek(0);
         weightInfoFile.skipBytes(DOUBLE_BYTE_SIZE * docID);
         weight = weightInfoFile.readDouble();
-        weightInfoFile.close();
         return weight;
     }
 
     @Override
     public long indexSize() throws IOException 
     {
-        RandomAccessFile weightInfoFile = new RandomAccessFile(new File(absolutePathSave.toString(), "docWeights.bin"), "r");
         long length = weightInfoFile.length();
-        weightInfoFile.close();
         return length/8;
     }
 
@@ -237,5 +233,13 @@ public class DiskPositionalIndex implements Index{
     public Path getSavePath() 
     {
         return absolutePathSave;
+    }
+    
+    @Override
+    public void close() throws IOException 
+    {
+        // TODO Auto-generated method stub
+        termInfoFile.close();
+        weightInfoFile.close();
     }
 }
