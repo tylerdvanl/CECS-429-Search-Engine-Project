@@ -25,4 +25,4 @@ III.  "BayesianClassificationRunner.java"
       
  In all above iterations, the stemming portion of language processing was performed using Snowball Stemmer, found here: https://snowballstem.org/
  
- The disk positional index was structured using a B-Tree fround from JDBM, here: https://jdbm.sourceforge.net/V1.0/doc/api/overview-summary.html
+ The disk positional index was structured using a B-Tree found from JDBM, here: https://jdbm.sourceforge.net/V1.0/doc/api/overview-summary.html
